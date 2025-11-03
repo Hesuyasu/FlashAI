@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Upload PDF{% endblock %}
+
+{% block content %}
+<style>
+    .upload-dashboard {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #fbfdff 60%, #ffe5e5 100%);
+    }
+
+    .upload-card {
+        background: #fff;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
+        padding: 3rem 2.5rem 2.5rem 2.5rem;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+    }
+
+    .pdf-icon {
+        background: #e3342f;
+        border-radius: 1rem;
+        display: inline-block;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .pdf-icon span {
+        color: #fff;
+        font-size: 2.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .upload-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #23274c;
+        margin-bottom: .7rem;
+        margin-top: .5rem;
+    }
+
+    .upload-desc {
+        color: #6d7a8a;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .big-btn {
+        background: #e3342f;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: .9rem 2.5rem;
+        margin-top: 1.2rem;
+        transition: background 0.23s;
+        border: none;
+    }
+
+    .big-btn:hover {
+        background: #bb2411;
+        color: #fff;
+    }
+
+    .pdf-list-area {
+        margin-top: 2.5rem;
+        max-width: 450px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<div class="upload-dashboard">
+    <div class="upload-card">
+        <div class="pdf-icon">
+            <span>PDF</span>
+        </div>
+        <div class="upload-title">
+            Upload PDF
+        </div>
+        <div class="upload-desc">
+            Quickly upload a PDF and convert it to flashcards with AI!
+        </div>
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="big-btn">Upload PDF</button>
+        </form>
+    </div>
+    <div class="pdf-list-area">
+        <h5 class="mt-4 mb-2 text-center" style="font-weight:600;">Uploaded PDFs</h5>
+        <ul class="list-group">
+            {% for pdf in pdf_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ pdf.pdf_file.url }}" target="_blank" style="font-size:1.08rem;">{{ pdf.title }}</a>
+                <small class="text-muted">{{ pdf.uploaded_at|date:"Y-m-d H:i" }}</small>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted text-center">No PDFs uploaded yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

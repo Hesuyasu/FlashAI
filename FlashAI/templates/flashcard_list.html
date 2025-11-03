@@ -1,0 +1,9 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+<h3>All FlashCards</h3>
+<ul>
+    {% for flashcard in flashcards %}
+    <li>{{ flashcard.question }} | {{ flashcard.answer }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

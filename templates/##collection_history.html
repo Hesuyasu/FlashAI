@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Collection History{% endblock %}
+{% block content %}
+<h4 class="mb-4">Collection History</h4>
+<div class="card p-3">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+                <th>Category</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flashcard in flashcards %}
+            <tr>
+                <td>{{ flashcard.question }}</td>
+                <td>{{ flashcard.answer }}</td>
+                <td>{{ flashcard.category.name }}</td>
+                <td>{{ flashcard.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

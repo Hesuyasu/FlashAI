@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .upload-dashboard {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #fbfdff 60%, #e5f0fe 100%);
+    }
+
+    .upload-card {
+        background: #fff;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
+        padding: 3rem 2.5rem 2.5rem 2.5rem;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+    }
+
+    .pdf-icon {
+        background: #e3342f;
+        border-radius: 1rem;
+        display: inline-block;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .pdf-icon span {
+        color: #fff;
+        font-size: 2.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .upload-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #23274c;
+        margin-bottom: .7rem;
+        margin-top: .5rem;
+    }
+
+    .upload-desc {
+        color: #6d7a8a;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .big-btn {
+        background: #23293f;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: .9rem 2.5rem;
+        margin-top: 1.2rem;
+        transition: background 0.23s;
+        text-decoration: none;
+        display: inline-block;
+        border: none;
+    }
+
+    .big-btn:hover {
+        background: #344268;
+        color: #fff;
+        text-decoration: none;
+    }
+</style>
+
+<div class="upload-dashboard">
+    <div class="upload-card">
+        <div class="pdf-icon">
+            <span>PDF</span>
+        </div>
+        <div class="upload-title">
+            PDF to flashcards
+        </div>
+        <div class="upload-desc">
+            Convert any PDF into your own AI flashcards
+        </div>
+        <a href="{% url 'upload_pdf' %}" class="big-btn">Upload PDF</a>
+    </div>
+</div>
+{% endblock %}

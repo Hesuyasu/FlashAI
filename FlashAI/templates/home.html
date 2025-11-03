@@ -1,0 +1,11 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+<h3>Welcome to FlashCard Dashboard</h3>
+<p>Total Flashcards: {{ total_flashcards }}</p>
+<p>Categories:</p>
+<ul>
+    {% for cat in categories %}
+    <li>{{ cat.category__name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
