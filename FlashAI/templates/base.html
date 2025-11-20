@@ -8,11 +8,39 @@
 </head>
 
 <body>
+
+    {% load socialaccount %} {% load static %}
+
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <div class="col-auto col-md-2 col-xl-2 px-sm-2 px-0 bg-light">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+                        
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'account_logout' %}" class="nav-link text-danger">Logout</a>
+                        </li>
+
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'account_login' %}" class="nav-link">Login</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{% url 'account_signup' %}" class="nav-link">Sign Up</a>
+                        </li>
+
+                        <li class="nav-item mt-2">
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-primary btn-sm">Login with Google</a>
+                        </li>
+
+                        <li class="nav-item mt-2">
+                            <a href="{% provider_login_url 'github' %}" class="btn btn-outline-primary btn-sm">Login with Github</a>
+                        </li>
+                        
+                        {% endif %}
+
                         <li class="nav-item">
                             <a href="{% url 'home' %}" class="nav-link">Home</a>
                         </li>
@@ -22,6 +50,7 @@
                         <li>
                             <a href="{% url 'collection_history' %}" class="nav-link">Collection Base History</a>
                         </li>
+
                     </ul>
                 </div>
             </div>

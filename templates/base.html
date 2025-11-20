@@ -1,3 +1,5 @@
+ {% load socialaccount %} {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -80,12 +82,14 @@
         }
     </style>
 </head>
-
+   
 <body>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-auto col-md-2 px-0 sidebar">
                 <div class="ps-logo text-center">FlashAI</div>
+
                 <nav class="nav flex-column">
                     <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                         href="{% url 'home' %}">
@@ -103,6 +107,27 @@
                         href="{% url 'upload_pdf' %}">
                         <i class="bi bi-file-earmark-pdf-fill"></i> Upload PDF
                     </a>
+
+                     {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'account_logout' %}" class="nav-link text-danger">Logout</a>
+                        </li>
+
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'account_login' %}" class="nav-link">Login</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{% url 'account_signup' %}" class="nav-link">Sign Up</a>
+                        </li>
+
+                        <li class="nav-item mt-2">
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-primary btn-sm">Login with Google</a>
+                        </li>
+
+                        {% endif %}
+
                 </nav>
             </div>
             <div class="col py-3">

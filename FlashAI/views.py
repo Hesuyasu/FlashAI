@@ -4,8 +4,12 @@ from .models import Flashcard, Category, PDFDocument
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FlashcardForm, CategoryForm, PDFUploadForm
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+@login_required
 def upload_pdf(request):
     if request.method == 'POST':
         form = PDFUploadForm(request.POST, request.FILES)
@@ -22,22 +26,23 @@ def upload_pdf(request):
     })
 
 
-class HomePageView(TemplateView):
+class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
 
-def home(request):
+
+def welcome(request):
     total_flashcards = Flashcard.objects.count()
     categories_count = Category.objects.count()
     new_this_week = Flashcard.objects.filter(
         created_at__gte=timezone.now() - timedelta(days=7)
     ).count()
-    return render(request, 'home.html', {
+    return render(request, 'welcome.html', {
         'total_flashcards': total_flashcards,
         'categories_count': categories_count,
         'new_this_week': new_this_week,
     })
 
-
+@login_required
 def create_flashcard(request):
     if request.method == 'POST':
         form = FlashcardForm(request.POST)
