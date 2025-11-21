@@ -1,0 +1,127 @@
+{% load i18n %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Confirm Google Login</title>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fef9f6;
+      background-image: 
+        radial-gradient(circle, #ffe8e0 1px, transparent 1px),
+        radial-gradient(circle, #e5f0fe 1px, transparent 1px);
+      background-size: 20px 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .auth-card {
+      background: #fff2e8;
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
+    }
+
+    .auth-card h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #f08f7f;
+      margin-bottom: 1rem;
+    }
+
+    .auth-card p {
+      font-size: 1rem;
+      color: #6d7a8a;
+      margin-bottom: 2rem;
+    }
+
+    .btn-google {
+      background: #f8b4a6;
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.8rem 1.5rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .btn-google:hover {
+      background: #f08f7f;
+      transform: scale(1.03);
+    }
+
+    .btn-cancel {
+      background: #fff5f2;
+      color: #f08f7f;
+      border: 1px solid #f08f7f;
+      border-radius: 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.8rem 1.5rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+      background: #f08f7f;
+      color: #fff;
+    }
+
+    .fa-google, .fa-times {
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <h3>Confirm Sign In</h3>
+    <p>You are about to sign in using your <strong>{{ provider.name }}</strong> account.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn-google">
+        <i class="fab fa-google"></i> Continue with {{ provider.name }}
+        
+      </button>
+    </form>
+
+    <a href="{% url 'account_login' %}" class="btn-cancel">
+      <i class="fa fa-times"></i> Cancel
+    </a>
+  </div>
+</body>
+</html>

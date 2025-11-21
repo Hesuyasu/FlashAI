@@ -1,0 +1,64 @@
+/* Card container */
+.flashcard-card {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    background: linear-gradient(145deg, #fefefe, #e0f7fa);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+/* Form title */
+.flashcard-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #00796b;
+    font-weight: 600;
+}
+
+/* Form fields */
+.flashcard-form .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.flashcard-form input,
+.flashcard-form textarea {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.flashcard-form input:focus,
+.flashcard-form textarea:focus {
+    outline: none;
+    border-color: #00796b;
+    box-shadow: 0 0 8px rgba(0,121,107,0.2);
+}
+
+/* Submit button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #00796b;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-submit:hover {
+    background-color: #004d40;
+    transform: translateY(-2px);
+}

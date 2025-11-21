@@ -1,16 +1,96 @@
 {% extends 'base.html' %}
 {% block title %}All FlashCards{% endblock %}
+
 {% block content %}
-<h4 class="mb-4">FlashCard List</h4>
-<div class="card p-3">
-    <ul class="list-group">
-        {% for flashcard in flashcards %}
-        <li class="list-group-item">
-            <strong>Q:</strong> {{ flashcard.question }}<br>
-            <strong>A:</strong> {{ flashcard.answer }}<br>
-            <small>Category: {{ flashcard.category.name }} | Created: {{ flashcard.created_at|date:"Y-m-d" }}</small>
-        </li>
-        {% endfor %}
-    </ul>
+
+<style>
+/* Page title */
+h4 {
+    text-align: center;
+    font-weight: 800;
+    font-size: 2rem;
+    color: #ff7f91;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px #fff;
+}
+
+/* Flashcard container */
+.flashcard-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+/* Individual flashcard */
+.flashcard-item {
+    background: #fff0f4; /* pastel pink */
+    border-radius: 1.5rem;
+    padding: 1.5rem 2rem;
+    width: 280px;
+    box-shadow: 0 6px 20px rgba(240, 143, 127, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.flashcard-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(240, 143, 127, 0.3);
+}
+
+/* Question text */
+.flashcard-item strong:first-child {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #d94d63;
+}
+
+/* Answer text hidden by default */
+.flashcard-item .answer {
+    display: none;
+    margin-top: 0.8rem;
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Flashcard footer (category & date) */
+.flashcard-footer {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 1rem;
+}
+
+/* Expanded flashcard */
+.flashcard-item.active .answer {
+    display: block;
+}
+
+.flashcard-item.active {
+    background: #ffd6e0; /* slightly different pastel */
+}
+
+/* Smooth transition */
+.flashcard-item, .flashcard-item .answer {
+    transition: all 0.3s ease;
+}
+</style>
+
+<h4>FlashCard List</h4>
+
+<div class="flashcard-list">
+    {% for flashcard in flashcards %}
+    <div class="flashcard-item" onclick="this.classList.toggle('active')">
+        <strong>Q:</strong> {{ flashcard.question }}
+        <div class="answer"><strong>A:</strong> {{ flashcard.answer }}</div>
+        <div class="flashcard-footer">
+            Category: {{ flashcard.category.name }} | Created: {{ flashcard.created_at|date:"Y-m-d" }}
+        </div>
+    </div>
+    {% endfor %}
 </div>
+
 {% endblock %}

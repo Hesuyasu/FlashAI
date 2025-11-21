@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,69 +7,143 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <style>
+        /* Body pastel background */
         body {
-            background: #fbfdff;
+            background: #fef9f6;
+            font-family: 'Poppins', sans-serif;
         }
 
-        /* Sidebar with red theme */
+        /* Sidebar pastel theme */
         .sidebar {
             min-height: 100vh;
-            background: #fff;
-            box-shadow: 1px 0 10px rgba(227, 52, 47, 0.08);
-            border-right: 3px solid #e3342f;
+            background: #fff8f0;
+            box-shadow: 1px 0 15px rgba(200, 150, 120, 0.15);
+            border-right: 3px solid #f7b2a0;
         }
 
         .sidebar .ps-logo {
-            font-weight: bold;
-            color: #e3342f;
-            font-size: 2rem;
+            font-weight: 900;
+            color: #f08f7f;
+            font-size: 2.2rem;
             letter-spacing: 2px;
+            text-shadow: 1px 1px 2px #ffd6c0;
             margin: 2rem 0 1.2rem 0;
         }
 
         .sidebar nav {
-            padding-top: 1.8rem;
+            padding-top: 2rem;
         }
 
         .sidebar .nav-link {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #e3342f;
-            background: #fff;
-            border-radius: 1.4rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f08f7f;
+            background: #fff3f0;
+            border-radius: 1.8rem;
             margin-bottom: 0.7rem;
-            padding: 0.75rem 1.4rem;
-            transition: background 0.18s, color 0.18s;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
 
         .sidebar .nav-link.active,
         .sidebar .nav-link:focus,
         .sidebar .nav-link:hover {
-            background: #ffe5e5;
-            color: #c60016 !important;
+            background: #ffdede;
+            color: #d94545 !important;
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(255, 150, 150, 0.3);
+            border-color: #f7b2a0;
         }
 
         .sidebar .nav-link i {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             vertical-align: middle;
-            margin-right: 0.7rem;
+            margin-right: 0.8rem;
         }
 
-        /* Main content bigger */
+        /* Main content */
         .col.py-3 {
             padding-left: 3rem !important;
             padding-right: 3rem !important;
         }
 
+        /* Card style for dashboard stats/content boxes */
+        .card, .flashcard-box {
+            background: #fff1f0;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(200, 150, 150, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover, .flashcard-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(200, 150, 150, 0.3);
+        }
+
+        /* Chunky outlined headings */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 900;
+            color: #f08f7f;
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff;
+        }
+
+        /* Buttons pastel */
+        .btn-primary {
+            background-color: #f08f7f;
+            border: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #d94545;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
+        }
+
+        /* Dashboard statistics box */
+        .dashboard-stat {
+            background: #fff5f2;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .dashboard-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(240, 143, 127, 0.3);
+        }
+
+        .dashboard-stat h3 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: #f08f7f;
+        }
+
+        .dashboard-stat p {
+            font-size: 1rem;
+            color: #777;
+        }
+
         @media (max-width: 768px) {
             .sidebar .ps-logo {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
                 margin: 1.2rem 0 0.8rem 0;
             }
 
             .sidebar .nav-link {
-                font-size: 0.98rem;
+                font-size: 1rem;
                 padding: 0.55rem 1rem;
                 margin-bottom: .4rem;
             }
@@ -84,6 +159,7 @@
 <body>
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
             <div class="col-auto col-md-2 px-0 sidebar">
                 <div class="ps-logo text-center">FlashAI</div>
                 <nav class="nav flex-column">
@@ -105,11 +181,54 @@
                     </a>
                 </nav>
             </div>
+
+            <!-- Main content -->
             <div class="col py-3">
-                {% block content %}{% endblock %}
+                {% block content %}
+                <h2 class="mb-4">Dashboard</h2>
+
+                <div class="row g-4">
+                    <!-- Flashcard count -->
+                    <div class="col-md-4">
+                        <div class="dashboard-stat">
+                            <h3 id="flashcard-count">{{ flashcard_count }}</h3>
+                            <p>Total FlashCards</p>
+                        </div>
+                    </div>
+
+                    <!-- Suggestion: Add more boxes -->
+                    <div class="col-md-4">
+                        <div class="dashboard-stat">
+                            <h3>⭐</h3>
+                            <p>Recently Added</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="dashboard-stat">
+                            <h3>📈</h3>
+                            <p>Activity Overview</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optionally, you can add charts or interactive elements here -->
+                {% endblock %}
             </div>
         </div>
     </div>
+
+    <!-- Optional JS for real-time updates -->
+    <script>
+        // Example: auto-refresh flashcard count every 10s
+        setInterval(() => {
+            fetch("{% url 'api_flashcard_count' %}")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('flashcard-count').innerText = data.count;
+                });
+        }, 10000);
+    </script>
 </body>
 
 </html>

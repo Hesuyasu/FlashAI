@@ -1,0 +1,169 @@
+{% load socialaccount %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PSUSphere Login</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fef9f6;
+      background-image: 
+        radial-gradient(circle, #ffe8e0 1px, transparent 1px),
+        radial-gradient(circle, #e5f0fe 1px, transparent 1px);
+      background-size: 20px 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .auth-card {
+      background: #fff2e8;
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
+    }
+
+    h3 {
+      color: #23274c;
+      margin-bottom: 1rem;
+    }
+
+    .text-center {
+      color: #6d7a8a;
+      margin-bottom: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 1.2rem;
+      border: 1px solid #f0d6d0;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input:focus {
+      border-color: #f08f7f;
+      box-shadow: 0 0 8px rgba(240, 143, 127, 0.2);
+    }
+
+    .btn-social {
+      background: #f8b4a6;
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.8rem 1rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .btn-social:hover {
+      background: #f08f7f;
+      transform: scale(1.03);
+    }
+
+    .btn-submit {
+      background: #f8b4a6;
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.8rem 1rem;
+      width: 100%;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: #f08f7f;
+      transform: scale(1.03);
+    }
+
+    .alert-danger {
+      background-color: #ffccbc;
+      color: #c62828;
+      border: none;
+      border-radius: 1rem;
+      padding: 0.7rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .links {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      color: #6d7a8a;
+    }
+
+    .links a {
+      color: #f08f7f;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <h3>PSUSphere Login</h3>
+
+    <!-- Social Login -->
+    <div class="text-center">Sign in with:</div>
+    <a href="{% provider_login_url 'google' %}" class="btn-social"><i class="fab fa-google"></i> Google</a>
+    <a href="{% provider_login_url 'github' %}" class="btn-social"><i class="fab fa-github"></i> GitHub</a>
+
+    <div class="text-center">or use your account:</div>
+
+    <!-- Login Form -->
+    <form method="post" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <input type="text" name="login" class="form-input" placeholder="Email or Username" required />
+      <input type="password" name="password" class="form-input" placeholder="Password" required />
+
+      {% if form.non_field_errors %}
+      <div class="alert-danger">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+
+    <div class="links">
+      <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a></p>
+      <p><a href="{% url 'account_reset_password' %}">Forgot password?</a></p>
+    </div>
+  </div>
+</body>
+</html>

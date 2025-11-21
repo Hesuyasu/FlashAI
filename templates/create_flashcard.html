@@ -1,12 +1,110 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Create FlashCard{% endblock %}
+
 {% block content %}
-<h4 class="mb-4">Create FlashCard</h4>
-<div class="card p-4">
-    <form method="post">
+
+<style>
+/* Container card for the form */
+.flashcard-card {
+    background: #fff3f8; /* soft pink */
+    border-radius: 2rem;
+    padding: 2.5rem 2rem;
+    max-width: 600px;
+    margin: 2rem auto;
+    box-shadow: 0 10px 25px rgba(255, 150, 150, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 35px rgba(255, 150, 150, 0.3);
+}
+
+/* Page title */
+.flashcard-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 2rem;
+    color: #f08f7f;
+    text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
+    margin-bottom: 2rem;
+}
+
+/* Form groups */
+.flashcard-form .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.flashcard-form label {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #d94d63;
+}
+
+.flashcard-form input,
+.flashcard-form textarea {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid #f7c0c7;
+    background: #fff0f4;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.flashcard-form input:focus,
+.flashcard-form textarea:focus {
+    border-color: #f08f7f;
+    box-shadow: 0 4px 10px rgba(240, 143, 127, 0.3);
+    background: #fff3f6;
+}
+
+/* Submit button */
+.btn-submit {
+    background-color: #f08f7f;
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1.5rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #d94545;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
+}
+</style>
+
+<h2 class="flashcard-title">Create a New FlashCard</h2>
+
+<div class="flashcard-card">
+    <form method="post" class="flashcard-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">Add FlashCard</button>
+        
+        <div class="form-group">
+            {{ form.question.label_tag }}
+            {{ form.question }}
+        </div>
+
+        <div class="form-group">
+            {{ form.answer.label_tag }}
+            {{ form.answer }}
+        </div>
+
+        <button class="btn-submit" type="submit">Add FlashCard</button>
     </form>
 </div>
 {% endblock %}

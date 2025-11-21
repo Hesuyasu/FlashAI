@@ -3,27 +3,100 @@
 
 {% block content %}
 <style>
+    /* Subtle small pattern pastel background */
     .upload-dashboard {
-        min-height: 80vh;
+        min-height: 100vh;
+        background-color: #fef9f6;
+        background-image: 
+            radial-gradient(circle, #ffe8e0 1px, transparent 1px),
+            radial-gradient(circle, #e5f0fe 1px, transparent 1px);
+        background-size: 20px 20px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #fbfdff 60%, #e5f0fe 100%);
+        padding-top: 4rem;
+        position: relative;
+        font-family: 'Poppins', sans-serif;
     }
 
-    .upload-card {
+    /* Profile / Settings button on upper-right */
+    .profile-menu {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 100;
+    }
+
+    .dots-btn {
+        background: #f8c5b8;
+        border: none;
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dots-btn:hover {
+        background: #f08f7f;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 3rem;
+        right: 0;
         background: #fff;
+        min-width: 140px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        border-radius: 0.8rem;
+        z-index: 200;
+        overflow: hidden;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 0.7rem 1rem;
+        text-decoration: none;
+        color: #23274c;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+
+    .dropdown-content a:hover {
+        background: #f5f5f5;
+    }
+
+    .show {
+        display: block;
+    }
+
+    /* Main Upload Card */
+    .upload-card {
+        background: #fff2e8;
         border-radius: 1.5rem;
         box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
         padding: 3rem 2.5rem 2.5rem 2.5rem;
         width: 100%;
         max-width: 450px;
         text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin-bottom: 2rem;
+    }
+
+    .upload-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
     }
 
     .pdf-icon {
-        background: #e3342f;
+        background: #f08f7f;
         border-radius: 1rem;
         display: inline-block;
         padding: 1.2rem;
@@ -38,7 +111,7 @@
     }
 
     .upload-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 800;
         color: #23274c;
         margin-bottom: .7rem;
@@ -52,38 +125,128 @@
     }
 
     .big-btn {
-        background: #23293f;
+        background: #f8b4a6;
         color: #fff;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 600;
         border-radius: 2rem;
         padding: .9rem 2.5rem;
         margin-top: 1.2rem;
-        transition: background 0.23s;
+        transition: background 0.3s, transform 0.3s;
         text-decoration: none;
         display: inline-block;
         border: none;
     }
 
     .big-btn:hover {
-        background: #344268;
-        color: #fff;
-        text-decoration: none;
+        background: #f08f7f;
+        transform: scale(1.05);
     }
+
+    /* Dashboard cards with darker pastel colors */
+    .dashboard-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .dashboard-stat {
+        background: #ffe3d6; /* darker pastel than background */
+        border-radius: 1.5rem;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        flex: 1 1 250px;
+    }
+
+    .dashboard-stat:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(240, 143, 127, 0.3);
+    }
+
+    .dashboard-stat h3 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #f08f7f;
+    }
+
+    .dashboard-stat p {
+        font-size: 1rem;
+        color: #777;
+    }
+
 </style>
 
 <div class="upload-dashboard">
+
+    <!-- Profile menu -->
+    <div class="profile-menu">
+        <button class="dots-btn" onclick="toggleDropdown()">⋮</button>
+        <div id="dropdown" class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="#">Settings</a>
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Upload Card -->
     <div class="upload-card">
         <div class="pdf-icon">
             <span>PDF</span>
         </div>
         <div class="upload-title">
-            PDF to flashcards
+            PDF to Flashcards
         </div>
         <div class="upload-desc">
             Convert any PDF into your own AI flashcards
         </div>
         <a href="{% url 'upload_pdf' %}" class="big-btn">Upload PDF</a>
     </div>
+
+    <!-- Dashboard stats -->
+    <div class="dashboard-cards">
+        <div class="dashboard-stat">
+            <h3>{{ flashcard_count }}</h3>
+            <p>Total Flashcards</p>
+        </div>
+        <div class="dashboard-stat">
+            <h3>⭐</h3>
+            <p>Recently Added</p>
+        </div>
+        <div class="dashboard-stat">
+            <h3>📈</h3>
+            <p>Activity Overview</p>
+        </div>
+        <div class="dashboard-stat">
+            <h3>⚙️</h3>
+            <p>Settings Shortcut</p>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    function toggleDropdown() {
+        document.getElementById("dropdown").classList.toggle("show");
+    }
+
+    // Close dropdown if clicked outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.dots-btn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>
+
 {% endblock %}
