@@ -4,6 +4,8 @@ from .models import Flashcard, Category, PDFDocument
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FlashcardForm, CategoryForm, PDFUploadForm
 from django.views.generic import TemplateView
+from django.http import JsonResponse
+from .models import Flashcard
 
 
 def upload_pdf(request):
@@ -78,3 +80,8 @@ def create_category(request):
     else:
         form = CategoryForm()
     return render(request, "create_category.html", {"form": form})
+
+
+def api_flashcard_count(request):
+    count = Flashcard.objects.count()
+    return JsonResponse({'count': count})
