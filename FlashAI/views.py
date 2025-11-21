@@ -29,13 +29,13 @@ class HomePageView(TemplateView):
 
 def home(request):
     total_flashcards = Flashcard.objects.count()
-    categories_count = Category.objects.count()
+    pdf_count = PDFDocument.objects.count() 
     new_this_week = Flashcard.objects.filter(
         created_at__gte=timezone.now() - timedelta(days=7)
     ).count()
     return render(request, 'home.html', {
-        'total_flashcards': total_flashcards,
-        'categories_count': categories_count,
+        'flashcard_count': total_flashcards,
+        'pdf_count': pdf_count, 
         'new_this_week': new_this_week,
     })
 

@@ -1,252 +1,514 @@
-{% extends 'base.html' %}
-{% block title %}Dashboard{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<style>
-    /* Subtle small pattern pastel background */
-    .upload-dashboard {
-        min-height: 100vh;
-        background-color: #fef9f6;
-        background-image: 
-            radial-gradient(circle, #ffe8e0 1px, transparent 1px),
-            radial-gradient(circle, #e5f0fe 1px, transparent 1px);
-        background-size: 20px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 4rem;
-        position: relative;
-        font-family: 'Poppins', sans-serif;
-    }
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <style>
+        /* Body pastel background */
+        body {
+            background: #fef9f6;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
 
-    /* Profile / Settings button on upper-right */
-    .profile-menu {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 100;
-    }
+        /* Sidebar pastel theme */
+        .sidebar {
+            min-height: 100vh;
+            background: #fff8f0;
+            box-shadow: 1px 0 15px rgba(200, 150, 120, 0.15);
+            border-right: 3px solid #f7b2a0;
+            transition: all 0.3s ease;
+            position: fixed;
+            width: 250px;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+        }
 
-    .dots-btn {
-        background: #f8c5b8;
-        border: none;
-        border-radius: 50%;
-        width: 2.5rem;
-        height: 2.5rem;
-        font-weight: bold;
-        font-size: 1.4rem;
-        color: #fff;
-        cursor: pointer;
-        transition: background 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+        .sidebar.collapsed {
+            width: 70px;
+        }
 
-    .dots-btn:hover {
-        background: #f08f7f;
-    }
+        .sidebar .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0 1.2rem 0;
+            transition: all 0.3s ease;
+        }
 
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        top: 3rem;
-        right: 0;
-        background: #fff;
-        min-width: 140px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        border-radius: 0.8rem;
-        z-index: 200;
-        overflow: hidden;
-    }
+        .ps-logo {
+            font-weight: 900;
+            color: #f08f7f;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px #ffd6c0;
+            transition: all 0.3s ease;
+        }
 
-    .dropdown-content a {
-        display: block;
-        padding: 0.7rem 1rem;
-        text-decoration: none;
-        color: #23274c;
-        font-weight: 600;
-        transition: background 0.2s;
-    }
+        .logo-svg {
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-    .dropdown-content a:hover {
-        background: #f5f5f5;
-    }
+        .sidebar.collapsed .ps-logo {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+        }
 
-    .show {
-        display: block;
-    }
+        .sidebar.collapsed .logo-svg {
+            opacity: 1;
+        }
 
-    /* Main Upload Card */
-    .upload-card {
-        background: #fff2e8;
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
-        padding: 3rem 2.5rem 2.5rem 2.5rem;
-        width: 100%;
-        max-width: 450px;
-        text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-        margin-bottom: 2rem;
-    }
+        .sidebar nav {
+            padding-top: 2rem;
+        }
 
-    .upload-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
-    }
+        .sidebar .nav-link {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #f08f7f;
+            background: #fff3f0;
+            border-radius: 1.8rem;
+            margin-bottom: 0.7rem;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+        }
 
-    .pdf-icon {
-        background: #f08f7f;
-        border-radius: 1rem;
-        display: inline-block;
-        padding: 1.2rem;
-        margin-bottom: 1rem;
-    }
+        .sidebar.collapsed .nav-link {
+            padding: 0.75rem;
+            justify-content: center;
+        }
 
-    .pdf-icon span {
-        color: #fff;
-        font-size: 2.5rem;
-        font-weight: bold;
-        letter-spacing: 2px;
-    }
+        .sidebar .nav-link.active,
+        .sidebar .nav-link:focus,
+        .sidebar .nav-link:hover {
+            background: #ffdede;
+            color: #d94545 !important;
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(255, 150, 150, 0.3);
+            border-color: #f7b2a0;
+        }
 
-    .upload-title {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #23274c;
-        margin-bottom: .7rem;
-        margin-top: .5rem;
-    }
+        .sidebar.collapsed .nav-link.active,
+        .sidebar.collapsed .nav-link:focus,
+        .sidebar.collapsed .nav-link:hover {
+            transform: translateX(3px);
+        }
 
-    .upload-desc {
-        color: #6d7a8a;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
+        .sidebar .nav-link i {
+            font-size: 1.6rem;
+            vertical-align: middle;
+            margin-right: 0.8rem;
+            transition: margin-right 0.3s ease;
+            min-width: 24px;
+            text-align: center;
+        }
 
-    .big-btn {
-        background: #f8b4a6;
-        color: #fff;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 2rem;
-        padding: .9rem 2.5rem;
-        margin-top: 1.2rem;
-        transition: background 0.3s, transform 0.3s;
-        text-decoration: none;
-        display: inline-block;
-        border: none;
-    }
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+        }
 
-    .big-btn:hover {
-        background: #f08f7f;
-        transform: scale(1.05);
-    }
+        .sidebar .nav-text {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
 
-    /* Dashboard cards with darker pastel colors */
-    .dashboard-cards {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        justify-content: center;
-        width: 100%;
-        max-width: 1200px;
-    }
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
 
-    .dashboard-stat {
-        background: #ffe3d6; /* darker pastel than background */
-        border-radius: 1.5rem;
-        padding: 2rem;
-        text-align: center;
-        box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        flex: 1 1 250px;
-    }
+        /* Toggle button */
+        .sidebar-toggle {
+            position: absolute;
+            top: 1rem;
+            right: -15px;
+            background: #f08f7f;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-    .dashboard-stat:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(240, 143, 127, 0.3);
-    }
+        .sidebar-toggle:hover {
+            background: #d94545;
+            transform: scale(1.1);
+        }
 
-    .dashboard-stat h3 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        color: #f08f7f;
-    }
+        /* Main content */
+        .main-content {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #fef9f6;
+            padding: 2rem 3rem;
+        }
 
-    .dashboard-stat p {
-        font-size: 1rem;
-        color: #777;
-    }
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 70px;
+        }
 
-</style>
+        /* Card style for dashboard stats/content boxes */
+        .card, .flashcard-box {
+            background: #fff1f0;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 8px 20px rgba(200, 150, 150, 0.2);
+            transition: all 0.3s ease;
+        }
 
-<div class="upload-dashboard">
+        .card:hover, .flashcard-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(200, 150, 150, 0.3);
+        }
 
-    <!-- Profile menu -->
-    <div class="profile-menu">
-        <button class="dots-btn" onclick="toggleDropdown()">⋮</button>
-        <div id="dropdown" class="dropdown-content">
-            <a href="#">Profile</a>
-            <a href="#">Settings</a>
-            <a href="#">Logout</a>
-        </div>
-    </div>
+        /* Chunky outlined headings */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 900;
+            color: #f08f7f;
+            text-shadow:
+                -1px -1px 0 #fff,
+                1px -1px 0 #fff,
+                -1px 1px 0 #fff,
+                1px 1px 0 #fff;
+        }
 
-    <!-- Main Upload Card -->
-    <div class="upload-card">
-        <div class="pdf-icon">
-            <span>PDF</span>
-        </div>
-        <div class="upload-title">
-            PDF to Flashcards
-        </div>
-        <div class="upload-desc">
-            Convert any PDF into your own AI flashcards
-        </div>
-        <a href="{% url 'upload_pdf' %}" class="big-btn">Upload PDF</a>
-    </div>
+        /* Buttons pastel */
+        .btn-primary {
+            background-color: #f08f7f;
+            border: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
 
-    <!-- Dashboard stats -->
-    <div class="dashboard-cards">
-        <div class="dashboard-stat">
-            <h3>{{ flashcard_count }}</h3>
-            <p>Total Flashcards</p>
-        </div>
-        <div class="dashboard-stat">
-            <h3>⭐</h3>
-            <p>Recently Added</p>
-        </div>
-        <div class="dashboard-stat">
-            <h3>📈</h3>
-            <p>Activity Overview</p>
-        </div>
-        <div class="dashboard-stat">
-            <h3>⚙️</h3>
-            <p>Settings Shortcut</p>
-        </div>
-    </div>
+        .btn-primary:hover {
+            background-color: #d94545;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
+        }
 
-</div>
+        /* Dashboard statistics box */
+        .dashboard-stat {
+            background: #fff5f2;
+            border-radius: 1.8rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
 
-<script>
-    function toggleDropdown() {
-        document.getElementById("dropdown").classList.toggle("show");
-    }
+        .dashboard-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(240, 143, 127, 0.3);
+        }
 
-    // Close dropdown if clicked outside
-    window.onclick = function(event) {
-        if (!event.target.matches('.dots-btn')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
-                }
+        .dashboard-stat h3 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: #f08f7f;
+        }
+
+        .dashboard-stat p {
+            font-size: 1rem;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar .logo-container {
+                margin: 1.2rem 0 0.8rem 0;
+            }
+
+            .ps-logo {
+                font-size: 1.6rem;
+                opacity: 0;
+                height: 0;
+                overflow: hidden;
+            }
+
+            .logo-svg {
+                opacity: 1;
+            }
+
+            .sidebar .nav-link {
+                font-size: 1rem;
+                padding: 0.55rem;
+                margin-bottom: .4rem;
+                justify-content: center;
+            }
+
+            .sidebar .nav-text {
+                opacity: 0;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+            }
+
+            .sidebar .nav-link i {
+                margin-right: 0;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 1rem 1.5rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block !important;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 999;
+                background: #f08f7f;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar-toggle {
+                display: none;
             }
         }
-    }
-</script>
 
-{% endblock %}
+        /* Mobile menu toggle (hidden by default) */
+        .mobile-menu-toggle {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-chevron-left" id="toggleIcon"></i>
+        </button>
+        <div class="logo-container text-center">
+            <div class="ps-logo">FlashAI</div>
+            <img class="logo-svg" src="{% static 'img/logo.svg' %}" alt="FlashAI Logo">
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                href="{% url 'home' %}">
+                <i class="bi bi-house-fill"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'create_flashcard' %}active{% endif %}"
+                href="{% url 'create_flashcard' %}">
+                <i class="bi bi-file-earmark-plus-fill"></i>
+                <span class="nav-text">Create FlashCard</span>
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'flashcard_list' %}active{% endif %}"
+                href="{% url 'flashcard_list' %}">
+                <i class="bi bi-journal-text"></i>
+                <span class="nav-text">FlashCard List</span>
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'upload_pdf' %}active{% endif %}"
+                href="{% url 'upload_pdf' %}">
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+                <span class="nav-text">Upload PDF</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        {% block content %}
+        <h2 class="mb-4">Dashboard</h2>
+
+        <div class="row g-4">
+            <!-- Flashcard count -->
+            <div class="col-md-4">
+                <div class="dashboard-stat">
+                    <h3 id="flashcard-count">
+                        {{ flashcard_count }}
+                    </h3>
+                    <p>Total FlashCards</p>
+                </div>
+            </div>
+
+            <!-- Suggestion: Add more boxes -->
+            <div class="col-md-4">
+                <div class="dashboard-stat">
+                    <h3>⭐</h3>
+                    <p>Recently Added</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="dashboard-stat">
+                    <h3>📈</h3>
+                    <p>Activity Overview</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Quick Actions</h3>
+                <div class="row g-4">
+                    <!-- Add New Flashcard -->
+                    <div class="col-md-4">
+                        <a href="{% url 'create_flashcard' %}" class="text-decoration-none">
+                            <div class="dashboard-stat" style="cursor: pointer;">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-plus-circle-fill" style="font-size: 3rem; color: #f08f7f;"></i>
+                                </div>
+                                <h4 class="text-center">Add New Flashcard</h4>
+                                <p class="text-center text-muted">Create a new flashcard with custom questions and answers</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- View Flashcard List -->
+                    <div class="col-md-4">
+                        <a href="{% url 'flashcard_list' %}" class="text-decoration-none">
+                            <div class="dashboard-stat" style="cursor: pointer;">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-journal-text" style="font-size: 3rem; color: #f08f7f;"></i>
+                                </div>
+                                <h4 class="text-center">View Flashcard List</h4>
+                                <p class="text-center text-muted">Browse and review all your flashcards</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Add New Category -->
+                    <div class="col-md-4">
+                        <a href="{% url 'create_category' %}" class="text-decoration-none">
+                            <div class="dashboard-stat" style="cursor: pointer;">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-folder-plus" style="font-size: 3rem; color: #f08f7f;"></i>
+                                </div>
+                                <h4 class="text-center">Add New Category</h4>
+                                <p class="text-center text-muted">Organize flashcards by creating new categories</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optionally, you can add charts or interactive elements here -->
+        {% endblock %}
+    </div>
+
+    <!-- Optional JS for real-time updates -->
+    <script>
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mainContent = document.querySelector('.main-content');
+
+        // Check localStorage for sidebar state
+        const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        
+        if (isSidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            toggleIcon.classList.remove('bi-chevron-left');
+            toggleIcon.classList.add('bi-chevron-right');
+        }
+
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.remove('bi-chevron-left');
+                toggleIcon.classList.add('bi-chevron-right');
+                localStorage.setItem('sidebarCollapsed', 'true');
+            } else {
+                toggleIcon.classList.remove('bi-chevron-right');
+                toggleIcon.classList.add('bi-chevron-left');
+                localStorage.setItem('sidebarCollapsed', 'false');
+            }
+        });
+
+        // Mobile menu toggle
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+        });
+
+        // Close mobile sidebar when clicking on a link
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            });
+        });
+
+        // Example: auto-refresh flashcard count every 10s
+        setInterval(() => {
+            fetch("{% url 'api_flashcard_count' %}")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('flashcard-count').innerText = data.count;
+                });
+        }, 10000);
+
+        function updateFlashcardCount() {
+    const countElement = document.getElementById('flashcard-count');
+    const spinner = countElement.querySelector('.loading-spinner');
+    
+    if (spinner) spinner.style.display = 'inline';
+    
+    fetch("{% url 'api_flashcard_count' %}")
+        .then(res => res.json())
+        .then(data => {
+            if (spinner) spinner.style.display = 'none';
+            countElement.innerText = data.count;
+        })
+        .catch(error => {
+            console.log('Error updating flashcard count:', error);
+            if (spinner) spinner.style.display = 'none';
+        });
+}
+    </script>
+</body>
+
+</html>
