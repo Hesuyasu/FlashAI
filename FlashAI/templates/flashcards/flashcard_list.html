@@ -1,0 +1,13 @@
+<h1>My Flashcards</h1>
+<a href="{% url 'flashcard_create' %}">Add New</a>
+<ul>
+  {% for card in flashcards %}
+  <li>
+    <strong>{{ card.question }}</strong> - {{ card.answer }}
+    <a href="{% url 'flashcard_update' card.pk %}">Edit</a>
+    <a href="{% url 'flashcard_delete' card.pk %}">Delete</a>
+  </li>
+  {% empty %}
+  <li>No flashcards yet.</li>
+  {% endfor %}
+</ul>

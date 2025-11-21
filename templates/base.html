@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <head>
     <meta charset="UTF-8">
@@ -102,6 +103,10 @@
                     <a class="nav-link {% if request.resolver_match.url_name == 'upload_pdf' %}active{% endif %}"
                         href="{% url 'upload_pdf' %}">
                         <i class="bi bi-file-earmark-pdf-fill"></i> Upload PDF
+                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'study_flashcards' %}active{% endif %}"
+                        href="{% url 'study_flashcards' %}">
+                        <i class="bi bi-file-earmark-pdf-fill"></i> Study Mode
                     </a>
                 </nav>
             </div>
