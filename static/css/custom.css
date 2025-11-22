@@ -1,0 +1,194 @@
+/* Card container */
+.flashcard-card {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
+    background: linear-gradient(145deg, #fefefe, #e0f7fa);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+/* Form title */
+.flashcard-title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #00796b;
+    font-weight: 600;
+}
+
+/* Form fields */
+.flashcard-form .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.flashcard-form input,
+.flashcard-form textarea {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.flashcard-form input:focus,
+.flashcard-form textarea:focus {
+    outline: none;
+    border-color: #00796b;
+    box-shadow: 0 0 8px rgba(0,121,107,0.2);
+}
+
+/* Submit button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background-color: #00796b;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-submit:hover {
+    background-color: #004d40;
+    transform: translateY(-2px);
+}
+
+/* Streak Section */
+.streak-section {
+    width: 100%;
+    max-width: 500px;
+    margin: 2rem 0;
+}
+
+.streak-card {
+    background: #fff5f2;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
+}
+
+.streak-card h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f08f7f;
+    margin-bottom: 1.5rem;
+}
+
+/* Calendar */
+.streak-calendar {
+    margin-bottom: 1.5rem;
+}
+
+.calendar-header {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #f08f7f;
+    font-weight: 600;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-table th {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: #f08f7f;
+    font-weight: 600;
+}
+
+.calendar-table td {
+    padding: 0.5rem;
+    text-align: center;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.calendar-day {
+    color: #777;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.calendar-day.studied {
+    background: #f08f7f;
+    color: white;
+}
+
+.calendar-day.today {
+    border: 2px solid #f08f7f;
+}
+
+.study-dot {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+/* Streak Info */
+.streak-info {
+    border-top: 1px solid #f0d6d0;
+    padding-top: 1.5rem;
+}
+
+.streak-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat .number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #f08f7f;
+}
+
+.stat .label {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.streak-btn {
+    background: #f8b4a6;
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.streak-btn:hover {
+    background: #f08f7f;
+    transform: scale(1.05);
+}

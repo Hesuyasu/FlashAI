@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}All FlashCards{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Page title */
+    h4 {
+        text-align: center;
+        font-weight: 800;
+        font-size: 2rem;
+        color: #ff7f91;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px #fff;
+    }
+
+    /* Flashcard container */
+    .flashcard-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+
+    /* Individual flashcard */
+    .flashcard-item {
+        background: #fff0f4;
+        /* pastel pink */
+        border-radius: 1.5rem;
+        padding: 1.5rem 2rem;
+        width: 280px;
+        box-shadow: 0 6px 20px rgba(240, 143, 127, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .flashcard-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(240, 143, 127, 0.3);
+    }
+
+    /* Question text */
+    .flashcard-item strong:first-child {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #d94d63;
+    }
+
+    /* Answer text hidden by default */
+    .flashcard-item .answer {
+        display: none;
+        margin-top: 0.8rem;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    /* Flashcard footer (category & date) */
+    .flashcard-footer {
+        font-size: 0.85rem;
+        color: #777;
+        margin-top: 1rem;
+    }
+
+    /* Expanded flashcard */
+    .flashcard-item.active .answer {
+        display: block;
+    }
+
+    .flashcard-item.active {
+        background: #ffd6e0;
+        /* slightly different pastel */
+    }
+
+    /* Smooth transition */
+    .flashcard-item,
+    .flashcard-item .answer {
+        transition: all 0.3s ease;
+    }
+
+    /* CRUD button group at bottom */
+    .crud-btn-group {
+        margin-top: 1rem;
+        align-self: flex-end;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .crud-btn-group a {
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 0.4rem;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .crud-btn-group a.edit-btn {
+        color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .crud-btn-group a.edit-btn:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .crud-btn-group a.delete-btn {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .crud-btn-group a.delete-btn:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>
+
+<h4>FlashCard List</h4>
+
+<div class="flashcard-list">
+    {% if flashcards %}
+    {% for flashcard in flashcards %}
+    <div class="flashcard-item" onclick="this.classList.toggle('active')">
+        <div>
+            <strong>Q:</strong> {{ flashcard.question }}
+            <div class="answer"><strong>A:</strong> {{ flashcard.answer }}</div>
+            <div class="flashcard-footer">
+                Category: {{ flashcard.category.name }} | Created: {{ flashcard.created_at|date:"Y-m-d" }}
+            </div>
+        </div>
+
+        <div class="crud-btn-group">
+            <a href="{% url 'flashcard_update' flashcard.id %}" class="edit-btn" title="Edit">
+                &#9998; Edit
+            </a>
+            <a href="{% url 'flashcard_delete' flashcard.id %}" class="delete-btn" title="Delete"
+                onclick="return confirm('Are you sure you want to delete this flashcard?');">
+                &#128465; Delete
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-muted text-center py-3">No flashcards found.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

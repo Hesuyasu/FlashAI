@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{% if form.instance.pk %}Edit FlashCard{% else %}Create FlashCard{% endif %}{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">{% if form.instance.pk %}Edit FlashCard{% else %}Create FlashCard{% endif %}</h4>
+
+<div class="card p-4 shadow-sm custom-form-card">
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Question -->
+        <div class="form-group mb-3">
+            <label for="id_question">Question</label>
+            <input type="text" name="question" id="id_question"
+                   value="{{ form.instance.question|default_if_none:'' }}"
+                   class="custom-input">
+        </div>
+
+        <!-- Answer -->
+        <div class="form-group mb-3">
+            <label for="id_answer">Answer</label>
+            <textarea name="answer" id="id_answer" class="custom-textarea">{{ form.instance.answer|default_if_none:'' }}</textarea>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group mb-3">
+            <label for="id_category_name">Category</label>
+            <input type="text" name="category_name" id="id_category_name"
+            value="{% if form.instance.category %}{{ form.instance.category.name }}{% endif %}"
+            class="custom-input" placeholder="Type category name">
+        </div>
+
+        <!-- Buttons -->
+        <button type="submit" class="custom-btn">
+            {% if form.instance.pk %}Update{% else %}Create{% endif %}
+        </button>
+        <a href="{% url 'flashcard_list' %}" class="custom-btn cancel-btn">Cancel</a>
+    </form>
+</div>
+
+<style>
+.custom-form-card {
+    border-radius: 1rem;
+    border: 2px solid #e3342f;
+    background-color: #fff;
+}
+
+.custom-input, .custom-textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e3342f;
+    margin-top: 0.3rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.custom-textarea {
+    height: 100px;
+}
+
+.custom-btn {
+    background-color: #e3342f;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 600;
+}
+
+.custom-btn:hover {
+    background-color: #c60016;
+}
+
+.cancel-btn {
+    background-color: #fff;
+    color: #e3342f;
+    border: 2px solid #e3342f;
+    margin-left: 0.5rem;
+}
+
+.cancel-btn:hover {
+    background-color: #ffe5e5;
+    color: #c60016;
+}
+</style>
+{% endblock %}

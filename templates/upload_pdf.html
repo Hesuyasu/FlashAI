@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block title %}Upload PDF{% endblock %}
+
+{% block content %}
+<style>
+    /* Soft pastel patterned background */
+    .upload-dashboard {
+        min-height: 100vh;
+        background-color: #fef9f6;
+        background-image: 
+            radial-gradient(circle, #ffe8e0 1px, transparent 1px),
+            radial-gradient(circle, #e5f0fe 1px, transparent 1px);
+        background-size: 20px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 4rem;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Main Upload Card */
+    .upload-card {
+        background: #fff2e8;
+        border-radius: 2rem;
+        box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
+        padding: 3rem 2.5rem 2.5rem 2.5rem;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin-bottom: 2rem;
+    }
+
+    .upload-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
+    }
+
+    .pdf-icon {
+        background: #f8c5b8;
+        border-radius: 1rem;
+        display: inline-block;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .pdf-icon span {
+        color: #fff;
+        font-size: 2.5rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .upload-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #23274c;
+        margin-bottom: 1rem;
+        margin-top: .5rem;
+    }
+
+    .upload-desc {
+        color: #6d7a8a;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Form inputs */
+    .form-input, .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border-radius: 1.2rem;
+        border: 1px solid #f0d6d0;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input:focus, .form-select:focus {
+        border-color: #f08f7f;
+        box-shadow: 0 0 8px rgba(240, 143, 127, 0.2);
+    }
+
+    /* Button */
+    .big-btn {
+        background: #f8b4a6;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: .9rem 2.5rem;
+        margin-top: 0.5rem;
+        transition: background 0.3s, transform 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .big-btn:hover {
+        background: #f08f7f;
+        transform: scale(1.05);
+    }
+
+    /* PDF list area */
+    .pdf-list-area {
+        margin-top: 2.5rem;
+        max-width: 520px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1rem;
+    }
+
+    .pdf-card {
+        background: #fff5f2;
+        border-radius: 1.5rem;
+        padding: 1rem 1.2rem;
+        box-shadow: 0 4px 12px rgba(240, 143, 127, 0.15);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .pdf-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(240, 143, 127, 0.2);
+    }
+
+    .pdf-card a {
+        color: #f08f7f;
+        font-weight: 600;
+        text-decoration: none;
+        margin-bottom: 0.5rem;
+        word-break: break-word;
+    }
+
+    .pdf-card a:hover {
+        text-decoration: underline;
+    }
+
+    .pdf-card .pdf-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #6d7a8a;
+    }
+
+    .pdf-badge {
+        background: #fcd9d2;
+        color: #f08f7f;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.8rem;
+    }
+</style>
+
+<div class="upload-dashboard">
+    <!-- Main Upload Card -->
+    <div class="upload-card">
+        <div class="pdf-icon">
+            <span>PDF</span>
+        </div>
+        <div class="upload-title">Upload PDF</div>
+        <div class="upload-desc">Quickly upload a PDF and convert it to flashcards with AI!</div>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}">
+            {% csrf_token %}
+
+            <!-- PDF Title Input -->
+            <input type="text" name="title" placeholder="Enter PDF Title" class="form-input">
+
+            <!-- Category Selection -->
+            <select class="form-select" name="category">
+                <option value="" disabled selected>Select Category</option>
+                <option>Science</option>
+                <option>Math</option>
+                <option>History</option>
+                <option>Language</option>
+                <option>Other</option>
+            </select>
+
+            <!-- Only file input -->
+            {{ form.pdf_file }}
+
+            <button type="submit" class="big-btn">Upload PDF</button>
+        </form>
+    </div>
+
+    <!-- Uploaded PDFs -->
+    <div class="pdf-list-area">
+        {% for pdf in pdf_list %}
+        <div class="pdf-card">
+            <a href="{{ pdf.pdf_file.url }}" target="_blank">{{ pdf.title }}</a>
+            <div class="pdf-info">
+                <span class="pdf-badge">{{ pdf.category|default:"Other" }}</span>
+                <small>{{ pdf.uploaded_at|date:"Y-m-d H:i" }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No PDFs uploaded yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

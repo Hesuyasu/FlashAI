@@ -1,0 +1,13 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+<h3>Collection Base History</h3>
+<ul>
+    {% for flashcard in flashcards %}
+    <li>
+        <strong>{{ flashcard.question }}</strong>: {{ flashcard.answer }}
+        <br>
+        <span>Created: {{ flashcard.created_at }}</span>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
