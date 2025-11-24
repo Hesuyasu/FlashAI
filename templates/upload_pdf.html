@@ -172,15 +172,8 @@
             <!-- PDF Title Input -->
             <input type="text" name="title" placeholder="Enter PDF Title" class="form-input">
 
-            <!-- Category Selection -->
-            <select class="form-select" name="category">
-                <option value="" disabled selected>Select Category</option>
-                <option>Science</option>
-                <option>Math</option>
-                <option>History</option>
-                <option>Language</option>
-                <option>Other</option>
-            </select>
+            <!-- Free category input -->
+            <input type="text" name="category" placeholder="Enter category (new or existing)" class="form-input" />
 
             <!-- Only file input -->
             {{ form.pdf_file }}

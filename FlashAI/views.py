@@ -1,19 +1,62 @@
 from datetime import timedelta
 from django.utils import timezone
 from .models import Flashcard, Category, PDFDocument
+from .utils import extract_text_from_pdf, generate_flashcards_with_ai
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import FlashcardForm, CategoryForm, PDFUploadForm
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from .models import Flashcard
 
 
+@login_required(login_url='/account/login/')
+def home(request):
+    return render(request, 'home.html')
+
 def upload_pdf(request):
+    """Handle PDF upload, extract text, generate AI flashcards, and persist.
+
+    Workflow:
+      1. User uploads a PDF with a title and (optional) category string.
+      2. Save PDFDocument instance.
+      3. Extract text via PyPDF2 (if available).
+      4. Generate flashcards using AI or fallback heuristic.
+      5. Create Flashcard objects under chosen/created Category.
+    """
     if request.method == 'POST':
         form = PDFUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('upload_pdf')
+            pdf_instance = form.save()  # Save PDFDocument
+
+            # Category selection from raw POST (not part of ModelForm)
+            category_name = request.POST.get('category') or 'Other'
+            category_obj, _ = Category.objects.get_or_create(name=category_name)
+
+            # Open the stored file for text extraction
+            pdf_file_field = pdf_instance.pdf_file
+            try:
+                pdf_file_field.open('rb')
+                extracted_text = extract_text_from_pdf(pdf_file_field)
+            finally:
+                try:
+                    pdf_file_field.close()
+                except Exception:
+                    pass
+
+            flashcards_data = generate_flashcards_with_ai(extracted_text)
+
+            for card in flashcards_data:
+                question = card.get('question', '').strip()[:255]
+                answer = card.get('answer', '').strip()
+                if question and answer:
+                    Flashcard.objects.create(
+                        question=question,
+                        answer=answer,
+                        category=category_obj
+                    )
+            return redirect('flashcard_list')
     else:
         form = PDFUploadForm()
 
@@ -24,9 +67,12 @@ def upload_pdf(request):
     })
 
 
-class HomePageView(TemplateView):
+class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = "home.html"
+    login_url = '/accounts/login/'
+    redirect_field_name = 'next'
 
+@login_required(login_url='/accounts/login/')
 def home(request):
     total_flashcards = Flashcard.objects.count()
     pdf_count = PDFDocument.objects.count() 
@@ -95,7 +141,15 @@ def create_category(request):
             return redirect('create_flashcard')
     else:
         form = CategoryForm()
-    return render(request, "create_category.html", {"form": form})
+    categories = Category.objects.order_by('name')
+    return render(request, "create_category.html", {"form": form, "categories": categories})
+
+
+def delete_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    if request.method == 'POST':
+        category.delete()
+    return redirect('create_category')
 
 
 def api_flashcard_count(request):

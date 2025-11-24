@@ -1,95 +1,94 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Study FlashCards{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/study.css' %}">
+{% endblock %}
+
 {% block content %}
-<h4 class="mb-4">Study FlashCards</h4>
+<h4 class="study-header">Study FlashCards</h4>
 
 <!-- Category Selector -->
-<form method="get" class="mb-4">
-    <label for="category" class="form-label">Select Category:</label>
-    <select name="category" id="category" class="form-select" onchange="this.form.submit()">
-        <option value="">-- Choose a category --</option>
-        {% for cat in categories %}
-        <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category_id %}selected{% endif %}>
-            {{ cat.name }}
-        </option>
-        {% endfor %}
-    </select>
+<form method="get" class="mb-4 study-panel">
+    <label for="category" class="form-label mb-2">Select Category:</label>
+    <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+            <select name="category" id="category" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Choose a category --</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == selected_category_id %}selected{% endif %}>
+                    {{ cat.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6 text-md-end study-progress">
+            {% if flashcards %}
+            <span id="progress">Card 1 of {{ flashcards|length }}</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if flashcards %}
+    <div class="form-text mt-2">Tip: Click the card to flip between question and answer.</div>
+    {% endif %}
 </form>
 
 {% if flashcards %}
-<div class="d-flex justify-content-center">
-    <div class="flashcard" id="flashcard">
+<div class="study-center">
+    <div class="study-card" id="flashcard">
         <div class="front p-3">
-            <strong>Q:</strong> <span id="question">{{ flashcards.0.question }}</span>
+            <strong class="qa-label">Q:</strong>
+            <span id="question">{{ flashcards.0.question }}</span>
         </div>
         <div class="back p-3">
-            <strong>A:</strong> <span id="answer">{{ flashcards.0.answer }}</span>
+            <strong class="qa-label">A:</strong>
+            <span id="answer">{{ flashcards.0.answer }}</span>
         </div>
     </div>
+    
+    
+    
 </div>
 
-<div class="d-flex justify-content-center mt-3">
-    <button id="prev" class="btn btn-outline-secondary me-2">Previous</button>
-    <button id="next" class="btn btn-outline-secondary">Next</button>
+<div class="d-flex justify-content-center mt-3 gap-2 study-controls">
+    <button id="prev" type="button" class="btn btn-outline-secondary">
+        <i class="bi bi-chevron-left"></i> Previous
+    </button>
+    <button id="flip" type="button" class="btn btn-pastel">
+        <i class="bi bi-arrow-repeat"></i> Flip
+    </button>
+    <button id="next" type="button" class="btn btn-primary">
+        Next <i class="bi bi-chevron-right"></i>
+    </button>
+    
 </div>
 
-<style>
-.flashcard {
-    width: 400px;
-    height: 200px;
-    perspective: 1000px;
-    cursor: pointer;
-    position: relative;
-}
-.flashcard .front, .flashcard .back {
-    width: 100%;
-    height: 100%;
-    border: 2px solid #e3342f;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    backface-visibility: hidden;
-    position: absolute;
-    transition: transform 0.6s;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    background: #fff;
-}
-.flashcard .back {
-    transform: rotateY(180deg);
-    background: #ffe5e5;
-}
-.flashcard.flipped .front { transform: rotateY(180deg); }
-.flashcard.flipped .back { transform: rotateY(0deg); }
-</style>
-
+{{ flashcards|json_script:"flashcards-data" }}
 <script>
-// Prepare flashcards data
-const flashcards = [
-    {% for card in flashcards %}
-    {question: "{{ card.question|escapejs }}", answer: "{{ card.answer|escapejs }}"},
-    {% endfor %}
-];
+// Prepare flashcards data from JSON script tag
+const flashcards = JSON.parse(document.getElementById('flashcards-data').textContent);
 
 let currentIndex = 0;
 const flashcardEl = document.getElementById('flashcard');
 const questionEl = document.getElementById('question');
 const answerEl = document.getElementById('answer');
+const progressEl = document.getElementById('progress');
 
-// Flip card
-flashcardEl.addEventListener('click', () => {
+// Flip card via card click or Flip button
+function toggleFlip() {
     flashcardEl.classList.toggle('flipped');
-});
+}
+flashcardEl.addEventListener('click', toggleFlip);
+document.getElementById('flip').addEventListener('click', toggleFlip);
 
-// Next button
+// Next / Previous
 document.getElementById('next').addEventListener('click', () => {
     currentIndex = (currentIndex + 1) % flashcards.length;
     updateCard();
 });
 
-// Previous button
 document.getElementById('prev').addEventListener('click', () => {
     currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
     updateCard();
@@ -98,8 +97,12 @@ document.getElementById('prev').addEventListener('click', () => {
 // Update card content
 function updateCard() {
     flashcardEl.classList.remove('flipped');
-    questionEl.textContent = flashcards[currentIndex].question;
-    answerEl.textContent = flashcards[currentIndex].answer;
+    const current = flashcards[currentIndex];
+    questionEl.textContent = current.question;
+    answerEl.textContent = current.answer;
+    if (progressEl) {
+        progressEl.textContent = `Card ${currentIndex + 1} of ${flashcards.length}`;
+    }
 }
 </script>
 {% else %}

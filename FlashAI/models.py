@@ -24,6 +24,7 @@ class PDFDocument(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        # Safely return the stored file name (pdf_file) and timestamp
+        return f"{self.pdf_file.name} - {self.uploaded_at}"
 
 

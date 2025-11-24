@@ -1,0 +1,84 @@
+{% load static %}
+{% load socialaccount %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | FlashAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+</head>
+
+<body>
+    <!-- Comic-style toggle centered above card -->
+    <div class="toggle-container">
+        <div class="toggle-switch">
+            <a href="{% url 'account_login' %}" style="color:#333; text-decoration:none;">Log in</a>
+            <label class="switch">
+                <input type="checkbox" checked data-url="{% url 'account_login' %}"
+                    onchange="window.location.href=this.dataset.url">
+                <span class="slider"></span>
+            </label>
+            <span>Sign up</span>
+        </div>
+    </div>
+    <!-- Comic-style card centered; GIF positioned to the right -->
+    <div class="card-wrap">
+        <img src="{% static 'img/Cat-jump.gif' %}" alt="Jumping Cat" class="cat-gif right" loading="lazy"
+            onerror="this.style.display='none'" />
+        <div class="comic-card">
+            <img src="{% static 'core/img/logo.png' %}" alt="Hangarin Logo" onerror="this.style.display='none'">
+            <h2>Sign up</h2>
+            <div class="label-row">Sign up with</div>
+            {% get_providers as providers %}
+            <div class="social-row">
+                {% if providers %}
+                    {% for provider in providers %}
+                        <a href="{% provider_login_url provider.id %}" class="btn-social" title="Sign up with {{ provider.name }}">
+                            {% if provider.id == 'google' %}
+                                <i class="fab fa-google" style="color:#ea4335;"></i>
+                            {% elif provider.id == 'github' %}
+                                <i class="fab fa-github" style="color:#333;"></i>
+                            {% else %}
+                                <i class="fas fa-sign-in-alt" style="color:#333;"></i>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div style="font-size:0.85em; color:#666;">Social signup not configured.</div>
+                {% endif %}
+            </div>
+            <div class="label-row">or use your details</div>
+            <form method="post" action="{% url 'account_signup' %}" style="width:100%;" novalidate>
+                {% csrf_token %}
+                {% for field in form.visible_fields %}
+                    <div style="width:100%;">
+                        {% if field.errors %}
+                            <div class="error-alert" style="margin-bottom:6px;">
+                                {% for err in field.errors %}<div>{{ err }}</div>{% endfor %}
+                            </div>
+                        {% endif %}
+                        {% render_field field class="form-input" placeholder=field.label %}
+                    </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="error-alert" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <button type="submit" class="comic-btn">Confirm!</button>
+            </form>
+            <div class="login-link-row">
+                Already have an account?
+                <a href="{% url 'account_login' %}" class="comic-login-link">Log in</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

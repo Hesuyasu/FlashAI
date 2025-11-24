@@ -1,0 +1,150 @@
+/* Body pastel background */
+body {
+    background: #fef9f6;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Sidebar pastel theme */
+.sidebar {
+    min-height: 100vh;
+    background: #fff8f0;
+    box-shadow: 1px 0 15px rgba(200, 150, 120, 0.15);
+    border-right: 3px solid #f7b2a0;
+    position: relative; /* ensure it stays within its grid column */
+    z-index: 0; /* keep below main content layer */
+}
+
+.sidebar .ps-logo {
+    font-weight: 900;
+    color: #f08f7f;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px #ffd6c0;
+    margin: 2rem 0 1.2rem 0;
+}
+
+.sidebar nav {
+    padding-top: 2rem;
+}
+
+.sidebar .nav-link {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f08f7f;
+    background: #fff3f0;
+    border-radius: 1.8rem;
+    margin-bottom: 0.7rem;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:focus,
+.sidebar .nav-link:hover {
+    background: #ffdede;
+    color: #d94545 !important;
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(255, 150, 150, 0.3);
+    border-color: #f7b2a0;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.6rem;
+    vertical-align: middle;
+    margin-right: 0.8rem;
+}
+
+/* Main content */
+.col.py-3 {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    position: relative; /* create stacking context for content */
+    z-index: 1; /* ensure dashboard cards sit above any adjacent elements */
+}
+
+/* Card style for dashboard stats/content boxes */
+.card, .flashcard-box {
+    background: #fff1f0;
+    border-radius: 2rem;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(200, 150, 150, 0.2);
+    transition: all 0.3s ease;
+}
+
+.card:hover, .flashcard-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(200, 150, 150, 0.3);
+}
+
+/* Chunky outlined headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 900;
+    color: #f08f7f;
+    text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
+}
+
+/* Buttons pastel */
+.btn-primary {
+    background-color: #f08f7f;
+    border: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #d94545;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
+}
+
+/* Dashboard statistics box */
+.dashboard-stat {
+    background: #fff5f2;
+    border-radius: 1.8rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative; /* keep clickable area on top */
+    z-index: 2;
+}
+
+.dashboard-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(240, 143, 127, 0.3);
+}
+
+.dashboard-stat h3 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #f08f7f;
+}
+
+.dashboard-stat p {
+    font-size: 1rem;
+    color: #777;
+}
+
+@media (max-width: 768px) {
+    .sidebar .ps-logo {
+        font-size: 1.6rem;
+        margin: 1.2rem 0 0.8rem 0;
+    }
+
+    .sidebar .nav-link {
+        font-size: 1rem;
+        padding: 0.55rem 1rem;
+        margin-bottom: .4rem;
+    }
+
+    .col.py-3 {
+        padding-left: 1.1rem !important;
+        padding-right: 1.1rem !important;
+    }
+}

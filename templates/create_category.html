@@ -1,12 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}Add Category{% endblock %}
+
 {% block content %}
-<h4 class="mb-4">Add Category</h4>
-<div class="card p-3">
-    <form method="post">
+<h4 class="mb-4" style="color:#f08f7f;font-weight:900;">Manage Categories</h4>
+
+<!-- Add Category Card -->
+<div class="card p-4 mb-4" style="background:#fff5f2;border-radius:1.5rem;box-shadow:0 8px 20px rgba(240,143,127,.15)">
+    <form method="post" class="row g-2 align-items-end">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">Add Category</button>
+        <div class="col-md-8">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button class="btn btn-primary" type="submit" style="background:#f08f7f;border:none;font-weight:700;">Add Category</button>
+        </div>
     </form>
+    <div class="form-text mt-2">Tip: Adding a category here lets you reuse it for flashcards and uploads.</div>
+    
+    <!-- Existing categories list -->
+    <div class="mt-4">
+        <h6 class="mb-3" style="color:#d94545;font-weight:800;">Existing Categories</h6>
+        {% if categories %}
+        <ul class="list-group">
+            {% for cat in categories %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="border-radius:1rem;margin-bottom:.5rem;border:1px solid #f0d6d0;background:#fff">
+                <span style="font-weight:600;color:#23274c">{{ cat.name }}</span>
+                <form method='post' action="{% url 'delete_category' cat.id %}" onsubmit='return confirm("Delete category {{ cat.name|escapejs }}? This will remove associated flashcards.");'>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm" style="background:#ffe3df;color:#d94545;border:none;font-weight:700;border-radius:1rem;">
+                        Delete
+                    </button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted mb-0">No categories yet. Add your first above.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

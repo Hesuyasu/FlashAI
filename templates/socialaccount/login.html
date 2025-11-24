@@ -1,127 +1,130 @@
-{% load i18n %} {% load static %}
+{% load i18n %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Confirm Google Login</title>
-
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
     body {
-      margin: 0;
+      background: #fff;
+      font-family: 'Comic Sans MS', 'Segoe UI', 'Roboto', sans-serif;
       min-height: 100vh;
+      margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #fef9f6;
-      background-image: 
-        radial-gradient(circle, #ffe8e0 1px, transparent 1px),
-        radial-gradient(circle, #e5f0fe 1px, transparent 1px);
-      background-size: 20px 20px;
-      font-family: 'Poppins', sans-serif;
+      flex-direction: column;
     }
 
-    .auth-card {
-      background: #fff2e8;
-      border-radius: 2rem;
-      box-shadow: 0 8px 32px rgba(60, 65, 90, 0.07);
-      padding: 3rem 2.5rem;
-      width: 100%;
-      max-width: 420px;
+    .comic-card {
+      background: #e0e0e0;
+      border: 3px solid #333;
+      border-radius: 10px;
+      width: 335px;
+      box-shadow: 4px 4px 0 #9e9e9e;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
       text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .auth-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 35px rgba(60, 65, 90, 0.12);
+    .comic-card h2 {
+      text-align: center;
+      font-family: 'Comic Sans MS', 'Segoe UI', cursive;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
     }
 
-    .auth-card h3 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #f08f7f;
-      margin-bottom: 1rem;
+    .comic-btn {
+      width: 220px;
+      border: 2px solid #333;
+      background-color: #fff;
+      font-family: inherit;
+      font-size: 1.1em;
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 #9e9e9e;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: bold;
+      padding: 10px;
+      margin-bottom: 10px;
     }
 
-    .auth-card p {
-      font-size: 1rem;
-      color: #6d7a8a;
-      margin-bottom: 2rem;
-    }
-
-    .btn-google {
-      background: #f8b4a6;
+    .comic-btn:hover {
+      background-color: #ff00cc;
       color: #fff;
-      border: none;
-      border-radius: 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.8rem 1.5rem;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      margin-bottom: 1rem;
+      border-color: #ff00cc;
     }
 
-    .btn-google:hover {
-      background: #f08f7f;
-      transform: scale(1.03);
-    }
-
-    .btn-cancel {
-      background: #fff5f2;
-      color: #f08f7f;
-      border: 1px solid #f08f7f;
-      border-radius: 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.8rem 1.5rem;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
+    .comic-cancel-btn {
+      width: 220px;
+      border: 2px solid #333;
+      background-color: #fff;
+      font-family: inherit;
+      font-size: 1.08em;
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 #9e9e9e;
       cursor: pointer;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.2s;
+      font-weight: bold;
+      padding: 10px;
+      color: #333;
       text-decoration: none;
+      display: inline-block;
     }
 
-    .btn-cancel:hover {
-      background: #f08f7f;
-      color: #fff;
+    .comic-cancel-btn:hover {
+      background-color: #ff00cc20;
+      color: #ff00cc;
+      border-color: #ff00cc;
+      text-decoration: underline;
     }
 
-    .fa-google, .fa-times {
-      font-size: 1.1rem;
+    .card-note {
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .account-icon {
+      font-size: 2.3em;
+      margin-bottom: 7px;
     }
   </style>
 </head>
-<body>
-  <div class="auth-card">
-    <h3>Confirm Sign In</h3>
-    <p>You are about to sign in using your <strong>{{ provider.name }}</strong> account.</p>
 
+<body>
+  <div class="comic-card">
+    <div class="account-icon">
+      {% if provider.name == "Google" %}
+      <i class="fab fa-google" style="color:#ea4335;"></i>
+      {% elif provider.name == "GitHub" %}
+      <i class="fab fa-github" style="color:#333;"></i>
+      {% else %}
+      <i class="fa fa-user-circle" style="color:#333;"></i>
+      {% endif %}
+    </div>
+    <h2>Confirm Sign In</h2>
+    <div class="card-note">
+      You are about to sign in using your
+      <strong>{{ provider.name }}</strong> account.
+    </div>
     <form method="post">
       {% csrf_token %}
-      <button type="submit" class="btn-google">
-        <i class="fab fa-google"></i> Continue with {{ provider.name }}
-        
+      <button type="submit" class="comic-btn">
+        Continue with {{ provider.name }}
       </button>
     </form>
-
-    <a href="{% url 'account_login' %}" class="btn-cancel">
-      <i class="fa fa-times"></i> Cancel
-    </a>
+    <a href="{% url 'account_login' %}" class="comic-cancel-btn">Cancel</a>
   </div>
 </body>
+
 </html>

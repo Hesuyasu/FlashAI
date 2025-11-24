@@ -1,0 +1,85 @@
+.study-card {
+    width: 520px;
+    max-width: 92vw;
+    height: 260px;
+    perspective: 1200px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 1.2rem;
+    background: linear-gradient(145deg,#ffe9e4 0%, #ffd9d1 40%, #f8b4a6 100%);
+    padding: .45rem;
+    box-shadow: 0 12px 32px rgba(240, 143, 127, 0.25);
+    transition: transform .45s cubic-bezier(.175,.885,.32,1.275), box-shadow .35s ease;
+}
+
+.study-card:hover {
+    transform: translateY(-6px) rotateX(4deg) rotateY(-2deg);
+    box-shadow: 0 18px 40px rgba(240, 143, 127, 0.33);
+}
+
+.study-card .front,
+.study-card .back {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #f08f7f;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.1rem 1.6rem;
+    background: #fffdfc;
+    color: #23274c;
+    font-size: 1.05rem;
+    line-height: 1.55rem;
+    font-weight: 500;
+    backface-visibility: hidden;
+    transition: transform 0.6s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 25px rgba(240, 143, 127, 0.18);
+}
+
+.study-card .back {
+    transform: rotateY(180deg);
+    background: #fff4f0;
+}
+
+.study-card.flipped .front { transform: rotateY(180deg); }
+.study-card.flipped .back { transform: rotateY(0deg); }
+
+/* Decorative corner accents */
+.study-card .front:before,
+.study-card .front:after,
+.study-card .back:before,
+.study-card .back:after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 3px solid #f08f7f;
+    border-radius: 50%;
+    opacity: .28;
+}
+.study-card .front:before { top: 10px; left: 10px; }
+.study-card .front:after { bottom: 10px; right: 10px; }
+.study-card .back:before { top: 10px; right: 10px; }
+.study-card .back:after { bottom: 10px; left: 10px; }
+
+.qa-label {
+    color: #d94545;
+    font-weight: 800;
+    margin-right: 0.35rem;
+    font-size: 1.1rem;
+}
+
+/* Study page layout */
+.study-header { color: #f08f7f; font-weight: 900; margin-bottom: 1.25rem; }
+.study-panel { background: #fff5f2; border-radius: 1.5rem; padding: 1.25rem; box-shadow: 0 8px 20px rgba(240, 143, 127, 0.15); }
+.study-center { display: flex; justify-content: center; }
+.study-progress { color: #6d7a8a; font-weight: 600; }
+
+/* Controls */
+.study-controls .btn { min-width: 120px; }
+.btn-pastel { background: linear-gradient(135deg,#f8b4a6 0%, #f08f7f 80%); color: #fff; border: none; font-weight: 700; box-shadow: 0 6px 18px rgba(240, 143, 127, 0.35); transition: all .3s ease; }
+.btn-pastel:hover { background: linear-gradient(135deg,#f08f7f 0%, #d94545 85%); box-shadow: 0 10px 24px rgba(240, 143, 127, 0.45); transform: translateY(-2px); }
+
+@media (max-width: 576px) { .study-card { height: 220px; } }
