@@ -88,6 +88,21 @@ h1, h2, h3, h4, h5, h6 {
         1px 1px 0 #fff;
 }
 
+/* Recently Added flashcards link styling */
+.recent-flashcards a.text-decoration-none,
+.recent-flashcards a.text-decoration-none:visited,
+.recent-flashcards a.text-decoration-none:hover,
+.recent-flashcards a.text-decoration-none:focus,
+.recent-flashcards a.text-decoration-none:active {
+    color: #f08f7f;
+    text-decoration: none;
+}
+
+.recent-flashcards a.text-decoration-none:hover .flashcard-box {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(200,150,150,0.35);
+}
+
 /* Buttons pastel */
 .btn-primary {
     background-color: #f08f7f;
@@ -113,6 +128,27 @@ h1, h2, h3, h4, h5, h6 {
     cursor: default;
     position: relative; /* keep clickable area on top */
     z-index: 2;
+}
+
+/* Enlarged total flashcards box */
+.flashcard-total-stat {
+    padding: 2.2rem 1.8rem;
+}
+.flashcard-total-stat h3 {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: .35rem;
+    color: #f08f7f;
+}
+.flashcard-total-stat .total-label {
+    font-size: 1.25rem;
+    color: #d94545;
+}
+
+@media (max-width: 576px) {
+    .flashcard-total-stat h3 { font-size: 3rem; }
+    .flashcard-total-stat .total-label { font-size: 1.05rem; }
 }
 
 .dashboard-stat:hover {

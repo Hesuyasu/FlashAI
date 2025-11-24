@@ -53,32 +53,32 @@
                 {% block content %}
                 <h2 class="mb-4">Dashboard</h2>
 
-                <div class="row g-4">
-                    <!-- Flashcard count -->
-                    <div class="col-md-4">
-                        <div class="dashboard-stat">
+                <div class="row justify-content-center g-4">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="dashboard-stat flashcard-total-stat text-center">
                             <h3 id="flashcard-count">{{ flashcard_count }}</h3>
-                            <p>Total FlashCards</p>
-                        </div>
-                    </div>
-
-                    <!-- Suggestion: Add more boxes -->
-                    <div class="col-md-4">
-                        <div class="dashboard-stat">
-                            <h3>⭐</h3>
-                            <p>Recently Added</p>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="dashboard-stat">
-                            <h3>📈</h3>
-                            <p>Activity Overview</p>
+                            <p class="mb-0 fw-bold total-label">Total FlashCards</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Optionally, you can add charts or interactive elements here -->
+                {% if request.resolver_match.url_name == 'home' %}
+                <h3 class="mt-5 mb-3" style="font-weight:900;color:#f08f7f;">Recently Added</h3>
+                <div class="row g-3 recent-flashcards">
+                    {% for fc in recent_flashcards %}
+                    <div class="col-md-6 col-lg-4">
+                        <a href="{% url 'flashcard_update' fc.id %}" class="text-decoration-none">
+                            <div class="flashcard-box" style="cursor:pointer;">
+                                <strong>{{ fc.question|truncatechars:80 }}</strong>
+                                <div class="small text-muted mt-2">{{ fc.created_at|date:"Y-m-d H:i" }} · {{ fc.category.name }}</div>
+                            </div>
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="col-12"><p class="text-muted mb-0">No flashcards added yet.</p></div>
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% endblock %}
             </div>
         </div>

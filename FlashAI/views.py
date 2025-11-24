@@ -74,15 +74,15 @@ class HomePageView(LoginRequiredMixin, TemplateView):
 
 @login_required(login_url='/accounts/login/')
 def home(request):
-    total_flashcards = Flashcard.objects.count()
-    pdf_count = PDFDocument.objects.count() 
-    new_this_week = Flashcard.objects.filter(
-        created_at__gte=timezone.now() - timedelta(days=7)
-    ).count()
+    """Dashboard view: provide counts and recent flashcards.
+
+    Adds recent_flashcards list limited to last 6 items for display in base template.
+    """
+    flashcard_count = Flashcard.objects.count()
+    recent_flashcards = Flashcard.objects.order_by('-created_at')[:6]
     return render(request, 'home.html', {
-        'flashcard_count': total_flashcards,
-        'pdf_count': pdf_count, 
-        'new_this_week': new_this_week,
+        'flashcard_count': flashcard_count,
+        'recent_flashcards': recent_flashcards,
     })
 
 
