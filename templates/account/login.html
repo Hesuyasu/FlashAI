@@ -8,14 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>FlashAI Login </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/login.css' %}?v=2">
 </head>
 
 <body>
   <div class="center-content">
-    <!-- Comic-style logo -->
     <div class="flashai-logo">FlashAI</div>
-    <!-- Comic-style toggle -->
     <div class="toggle-switch">
       <span>Log in</span>
       <label class="switch">
@@ -24,7 +22,6 @@
       </label>
       <a href="{% url 'account_signup' %}" style="color:#333; text-decoration:none;">Sign up</a>
     </div>
-    <!-- Comic-style card centered; GIF positioned to the left -->
     <div class="card-wrap">
       <img src="{% static 'img/Cat-jump.gif' %}" alt="Jumping Cat" class="cat-gif left" loading="lazy"
         onerror="this.style.display='none'" />

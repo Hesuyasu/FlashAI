@@ -159,30 +159,56 @@ def generate_flashcards_with_ai(text):
         model = sdk.model("Qwen/Qwen3-4B-Instruct-2507")
         prompt = (
             "Generate exactly 3 study flashcards as a JSON array, nothing else. "
-            "Each flashcard can be either:"
-            "1) A simple Q&A with keys 'question' and 'answer', OR "
-            "2) A multiple-choice question with keys 'question', 'answer', 'option_a', 'option_b', 'option_c', 'option_d', and 'correct_option' (one of A, B, C, D). "
-            "For MCQ: 'question' should be the question text, 'answer' is a brief explanation, options are the four choices, and 'correct_option' is the letter of the right answer. "
-            "Example MCQ: {\"question\": \"The server in a REST API hosts the data or functionality?\", \"answer\": \"Functionality\", \"option_a\": \"Data\", \"option_b\": \"Functionality\", \"option_c\": \"Network\", \"option_d\": \"Protocol\", \"correct_option\": \"B\"}. "
-            "Output only a valid JSON array starting with '[' and ending with ']'. "
+            "Each flashcard MUST be a multiple-choice question with these exact keys: "
+            "'question', 'answer', 'option_a', 'option_b', 'option_c', 'option_d', and 'correct_option' (one of A, B, C, D). "
+            "'question' is the question text, 'answer' is a brief explanation of why the correct option is right, "
+            "options are the four choices (with one correct and three plausible distractors), and 'correct_option' is the letter (A, B, C, or D) of the right answer. "
+            "Example: {\"question\": \"The server in a REST API hosts the data or functionality?\", \"answer\": \"The server hosts functionality and provides access to resources through endpoints.\", \"option_a\": \"Data\", \"option_b\": \"Functionality\", \"option_c\": \"Network\", \"option_d\": \"Protocol\", \"correct_option\": \"B\"}. "
+            "Output ONLY a valid JSON array starting with '[' and ending with ']'. "
             "Do NOT include any explanation, markdown, code blocks, or reasoning. "
             f"Text: {cleaned_text[:1000]}"
         )
-        output, error = model.run([
+        output = model.run([
             {"role": "user", "content": prompt}
         ])
-        if error:
-            print("Bytez AI error:", error)
-            return _fallback_flashcards(cleaned_text)
-        content = output.get('content') if isinstance(output, dict) else output
+        
+        # DEBUG: Print raw AI response
+        print("=" * 80)
+        print("RAW AI RESPONSE:")
+        print(output)
+        print("=" * 80)
+        
+        # Handle new Response object structure
+        if hasattr(output, 'output') and isinstance(output.output, dict):
+            content = output.output.get('content')
+        elif isinstance(output, dict):
+            content = output.get('content')
+        else:
+            content = str(output)
+        
         if not content:
+            print("WARNING: No content extracted from AI response")
             return _fallback_flashcards(cleaned_text)
+        
         json_string = extract_last_json_array(content)
         if not json_string:
+            print("WARNING: No JSON array found in AI response")
             return _fallback_flashcards(cleaned_text)
+        
+        print("EXTRACTED JSON STRING:")
+        print(json_string)
+        print("=" * 80)
+        
         flashcards = json.loads(json_string)
         if not isinstance(flashcards, list):
             return _fallback_flashcards(cleaned_text)
+        
+        # DEBUG: Print parsed flashcards
+        print("PARSED FLASHCARDS:")
+        for idx, c in enumerate(flashcards[:10]):
+            print(f"Card {idx + 1}:", c)
+        print("=" * 80)
+        
         # Basic validation of keys
         valid = []
         for c in flashcards[:10]:
@@ -197,6 +223,9 @@ def generate_flashcards_with_ai(text):
                     card_data['option_c'] = str(c.get('option_c', ''))[:255]
                     card_data['option_d'] = str(c.get('option_d', ''))[:255]
                     card_data['correct_option'] = str(c.get('correct_option', ''))[:1].upper()
+                    print(f"MCQ DETECTED: {card_data['question'][:50]}... with options A-D")
+                else:
+                    print(f"REGULAR Q&A: {card_data['question'][:50]}...")
                 valid.append(card_data)
         return valid or _fallback_flashcards(cleaned_text)
     except Exception as e:  # pragma: no cover

@@ -15,7 +15,6 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
             <div class="col-auto col-md-2 px-0 sidebar comic-sidebar">
                 <div class="ps-logo text-center comic-badge"><span>FlashAI</span></div>
                 <nav class="nav flex-column">
@@ -48,7 +47,6 @@
                 </nav>
             </div>
 
-            <!-- Main content -->
             <div class="col py-3">
                 {% block content %}
                 <h2 class="mb-4 comic-heading"><span>Dashboard</span></h2>
@@ -84,9 +82,7 @@
         </div>
     </div>
 
-    <!-- Optional JS for real-time updates -->
     <script>
-        // Example: auto-refresh flashcard count every 10s
         setInterval(() => {
             fetch("{% url 'api_flashcard_count' %}")
                 .then(res => res.json())

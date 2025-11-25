@@ -9,11 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | FlashAI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}?v=2">
 </head>
 
 <body>
-    <!-- Comic-style toggle centered above card -->
+    <div class="flashai-logo">FlashAI</div>
     <div class="toggle-container">
         <div class="toggle-switch">
             <a href="{% url 'account_login' %}" style="color:#333; text-decoration:none;">Log in</a>
@@ -25,12 +25,10 @@
             <span>Sign up</span>
         </div>
     </div>
-    <!-- Comic-style card centered; GIF positioned to the right -->
     <div class="card-wrap">
         <img src="{% static 'img/Cat-jump.gif' %}" alt="Jumping Cat" class="cat-gif right" loading="lazy"
             onerror="this.style.display='none'" />
         <div class="comic-card">
-            <img src="{% static 'core/img/logo.png' %}" alt="Hangarin Logo" onerror="this.style.display='none'">
             <h2>Sign up</h2>
             <div class="label-row">Sign up with</div>
             {% get_providers as providers %}

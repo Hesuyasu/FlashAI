@@ -1,17 +1,15 @@
-/* Body pastel background */
 body {
     background: #fef9f6;
     font-family: 'Poppins', sans-serif;
 }
 
-/* Sidebar pastel theme */
 .sidebar {
     min-height: 100vh;
     background: #fff8f0;
     box-shadow: 1px 0 15px rgba(200, 150, 120, 0.15);
     border-right: 3px solid #f7b2a0;
-    position: relative; /* ensure it stays within its grid column */
-    z-index: 0; /* keep below main content layer */
+    position: relative;
+    z-index: 0;
 }
 
 .sidebar .ps-logo {
@@ -55,15 +53,13 @@ body {
     margin-right: 0.8rem;
 }
 
-/* Main content */
 .col.py-3 {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
-    position: relative; /* create stacking context for content */
-    z-index: 1; /* ensure dashboard cards sit above any adjacent elements */
+    position: relative;
+    z-index: 1;
 }
 
-/* Card style for dashboard stats/content boxes */
 .card, .flashcard-box {
     background: #fff1f0;
     border-radius: 2rem;
@@ -77,7 +73,6 @@ body {
     box-shadow: 0 12px 25px rgba(200, 150, 150, 0.3);
 }
 
-/* Chunky outlined headings */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 900;
     color: #f08f7f;
@@ -88,7 +83,6 @@ h1, h2, h3, h4, h5, h6 {
         1px 1px 0 #fff;
 }
 
-/* Comic badge style for sidebar logo */
 .comic-badge span {
     display: inline-block;
     background: #f08f7f;
@@ -120,7 +114,6 @@ h1, h2, h3, h4, h5, h6 {
     .comic-badge span { box-shadow: 4px 4px 0 #333; }
 }
 
-/* Recently Added flashcards link styling */
 .recent-flashcards a.text-decoration-none,
 .recent-flashcards a.text-decoration-none:visited,
 .recent-flashcards a.text-decoration-none:hover,
@@ -135,7 +128,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 12px 28px rgba(200,150,150,0.35);
 }
 
-/* Buttons pastel */
 .btn-primary {
     background-color: #f08f7f;
     border: none;
@@ -149,7 +141,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
 }
 
-/* Dashboard statistics box */
 .dashboard-stat {
     background: #fff5f2;
     border-radius: 1.8rem;
@@ -158,11 +149,10 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
     transition: all 0.3s ease;
     cursor: default;
-    position: relative; /* keep clickable area on top */
+    position: relative;
     z-index: 2;
 }
 
-/* Enlarged total flashcards box */
 .flashcard-total-stat {
     padding: 2.2rem 1.8rem;
 }
@@ -217,9 +207,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* ================= Comic Sidebar (Navbar) ================= */
 .comic-sidebar {
-    /* Comic look: strong border and offset shadow using theme accent */
     border-top-right-radius: 14px;
     border-bottom-right-radius: 14px;
     border: 3px solid #333;
@@ -246,9 +234,9 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     font-size: 1.12rem;
     letter-spacing: .5px;
-    margin: 0 16px 20px 16px; /* more outer spacing */
-    padding: 0.85rem 1.35rem; /* larger button feel */
-    min-height: 64px; /* equal pill height */
+    margin: 0 16px 20px 16px;
+    padding: 0.85rem 1.35rem;
+    min-height: 64px;
     box-shadow: 4px 4px 0 #f08f7f;
     transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
     display: flex;
@@ -286,7 +274,7 @@ h1, h2, h3, h4, h5, h6 {
         margin: 0 10px 14px 10px;
         padding: 0.7rem 1rem;
         font-size: 1.05rem;
-        min-height: 56px; /* mobile equal height */
+        min-height: 56px;
         box-shadow: 3px 3px 0 #f08f7f;
     }
 }
