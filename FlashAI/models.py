@@ -13,6 +13,16 @@ class Flashcard(models.Model):
     answer = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Optional multiple-choice fields
+    option_a = models.CharField(max_length=255, blank=True)
+    option_b = models.CharField(max_length=255, blank=True)
+    option_c = models.CharField(max_length=255, blank=True)
+    option_d = models.CharField(max_length=255, blank=True)
+    correct_option = models.CharField(
+        max_length=1,
+        choices=[('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
+        blank=True
+    )
 
     def __str__(self):
         return self.question

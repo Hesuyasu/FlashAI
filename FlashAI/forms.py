@@ -12,7 +12,11 @@ class FlashcardForm(forms.ModelForm):
 
     class Meta:
         model = Flashcard
-        fields = ['question', 'answer', 'category_name']  # Use category_name, not ForeignKey
+        fields = [
+            'question',
+            'answer',
+            'option_a', 'option_b', 'option_c', 'option_d', 'correct_option',
+        ]
 
 class CategoryForm(forms.ModelForm):
     class Meta:

@@ -54,7 +54,12 @@ def upload_pdf(request):
                     Flashcard.objects.create(
                         question=question,
                         answer=answer,
-                        category=category_obj
+                        category=category_obj,
+                        option_a=card.get('option_a', ''),
+                        option_b=card.get('option_b', ''),
+                        option_c=card.get('option_c', ''),
+                        option_d=card.get('option_d', ''),
+                        correct_option=card.get('correct_option', '')
                     )
             return redirect('flashcard_list')
     else:
@@ -95,7 +100,12 @@ def create_flashcard(request):
             flashcard = Flashcard(
                 question=form.cleaned_data['question'],
                 answer=form.cleaned_data['answer'],
-                category=category
+                category=category,
+                option_a=form.cleaned_data.get('option_a',''),
+                option_b=form.cleaned_data.get('option_b',''),
+                option_c=form.cleaned_data.get('option_c',''),
+                option_d=form.cleaned_data.get('option_d',''),
+                correct_option=form.cleaned_data.get('correct_option','')
             )
             flashcard.save()
             return redirect('flashcard_list')
@@ -121,7 +131,12 @@ def flashcard_update(request, pk):
     flashcard = get_object_or_404(Flashcard, pk=pk)  # user=request.user
     form = FlashcardForm(request.POST or None, instance=flashcard)
     if form.is_valid():
-        form.save()
+        obj = form.save(commit=False)
+        category_name = request.POST.get('category_name')
+        if category_name:
+            category, _ = Category.objects.get_or_create(name=category_name)
+            obj.category = category
+        obj.save()
         return redirect('flashcard_list')
     return render(request, 'flashcards/flashcard_form.html', {'form': form})
 
@@ -167,10 +182,17 @@ def study_flashcards(request):
         flashcards_qs = Flashcard.objects.none()
 
     # Convert QuerySet to list of dicts for JSON serialization
-    flashcards = [
-        {"question": f.question, "answer": f.answer}
-        for f in flashcards_qs
-    ]
+    flashcards = []
+    for f in flashcards_qs:
+        options = [f.option_a, f.option_b, f.option_c, f.option_d]
+        # filter out empty strings while preserving order
+        options = [o for o in options if o]
+        flashcards.append({
+            "question": f.question,
+            "answer": f.answer,
+            "options": options,
+            "correct": f.correct_option or ""
+        })
 
     return render(request, 'flashcards/study.html', {
         'categories': categories,

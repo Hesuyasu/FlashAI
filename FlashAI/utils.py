@@ -159,7 +159,11 @@ def generate_flashcards_with_ai(text):
         model = sdk.model("Qwen/Qwen3-4B-Instruct-2507")
         prompt = (
             "Generate exactly 3 study flashcards as a JSON array, nothing else. "
-            "Each flashcard includes keys 'question' and 'answer'. "
+            "Each flashcard can be either:"
+            "1) A simple Q&A with keys 'question' and 'answer', OR "
+            "2) A multiple-choice question with keys 'question', 'answer', 'option_a', 'option_b', 'option_c', 'option_d', and 'correct_option' (one of A, B, C, D). "
+            "For MCQ: 'question' should be the question text, 'answer' is a brief explanation, options are the four choices, and 'correct_option' is the letter of the right answer. "
+            "Example MCQ: {\"question\": \"The server in a REST API hosts the data or functionality?\", \"answer\": \"Functionality\", \"option_a\": \"Data\", \"option_b\": \"Functionality\", \"option_c\": \"Network\", \"option_d\": \"Protocol\", \"correct_option\": \"B\"}. "
             "Output only a valid JSON array starting with '[' and ending with ']'. "
             "Do NOT include any explanation, markdown, code blocks, or reasoning. "
             f"Text: {cleaned_text[:1000]}"
@@ -185,7 +189,15 @@ def generate_flashcards_with_ai(text):
             q = c.get('question') or c.get('Question')
             a = c.get('answer') or c.get('Answer')
             if q and a:
-                valid.append({'question': str(q)[:255], 'answer': str(a)[:1000]})
+                card_data = {'question': str(q)[:255], 'answer': str(a)[:1000]}
+                # Include MCQ fields if present
+                if c.get('option_a'):
+                    card_data['option_a'] = str(c.get('option_a', ''))[:255]
+                    card_data['option_b'] = str(c.get('option_b', ''))[:255]
+                    card_data['option_c'] = str(c.get('option_c', ''))[:255]
+                    card_data['option_d'] = str(c.get('option_d', ''))[:255]
+                    card_data['correct_option'] = str(c.get('correct_option', ''))[:1].upper()
+                valid.append(card_data)
         return valid or _fallback_flashcards(cleaned_text)
     except Exception as e:  # pragma: no cover
         print("AI generation exception:", e)

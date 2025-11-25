@@ -32,6 +32,38 @@
                 <label for="id_answer">Answer</label>
                 <textarea name="answer" id="id_answer">{{ form.instance.answer|default_if_none:'' }}</textarea>
             </div>
+            <div class="mb-2">
+                <label>Multiple Choice Options (optional)</label>
+                <div class="row g-2">
+                    <div class="col-12 col-md-6">
+                        <label for="id_option_a">Option A</label>
+                        <input type="text" name="option_a" id="id_option_a" value="{{ form.instance.option_a|default_if_none:'' }}">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="id_option_b">Option B</label>
+                        <input type="text" name="option_b" id="id_option_b" value="{{ form.instance.option_b|default_if_none:'' }}">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="id_option_c">Option C</label>
+                        <input type="text" name="option_c" id="id_option_c" value="{{ form.instance.option_c|default_if_none:'' }}">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="id_option_d">Option D</label>
+                        <input type="text" name="option_d" id="id_option_d" value="{{ form.instance.option_d|default_if_none:'' }}">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_correct_option">Correct Option</label>
+                <select name="correct_option" id="id_correct_option">
+                    <option value="" {% if not form.instance.correct_option %}selected{% endif %}>-- None --</option>
+                    <option value="A" {% if form.instance.correct_option == 'A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if form.instance.correct_option == 'B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if form.instance.correct_option == 'C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if form.instance.correct_option == 'D' %}selected{% endif %}>D</option>
+                </select>
+                <div class="form-text">Leave blank if not a multiple-choice card.</div>
+            </div>
             <div class="mb-3">
                 <label for="id_category_name">Category</label>
                 <input type="text" name="category_name" id="id_category_name" value="{% if form.instance.category %}{{ form.instance.category.name }}{% endif %}" placeholder="Type category name">

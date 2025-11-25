@@ -12,6 +12,14 @@
 .study-controls .btn { border:2px solid #333; font-weight:700; box-shadow:3px 3px 0 #f08f7f; }
 .study-controls .btn:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 #f08f7f; }
 .qa-label { color:#d94545; font-weight:700; }
+/* MCQ options */
+.mcq-option { display:flex; align-items:center; gap:.75rem; width:100%; padding:.8rem 1rem; border:2px solid #333; border-radius:14px; background:#fff; box-shadow:4px 4px 0 #f08f7f; font-weight:600; }
+.mcq-option:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 #f08f7f; }
+.mcq-letter { display:inline-flex; width:34px; height:34px; border:2px solid #333; border-radius:50%; align-items:center; justify-content:center; background:#ffdede; color:#d94545; font-weight:900; }
+.mcq-option.correct { background:#d9f7d9; }
+.mcq-option.incorrect { background:#ffe0e0; }
+.mcq-option.disabled { pointer-events:none; opacity:.8; }
+#mcq-panel { margin: 0 auto; }
 </style>
 {% endblock %}
 
@@ -61,6 +69,16 @@
         <button id="next" type="button" class="btn btn-primary"> Next <i class="bi bi-chevron-right"></i> </button>
     </div>
 
+    <!-- MCQ Options Panel -->
+    <div id="mcq-panel" class="mt-3 w-100 d-flex flex-column" style="max-width:600px; display:none;">
+        <div class="row g-2">
+            <div class="col-12"><button class="mcq-option" data-letter="A"><span class="mcq-letter">A</span><span class="mcq-text"></span></button></div>
+            <div class="col-12"><button class="mcq-option" data-letter="B"><span class="mcq-letter">B</span><span class="mcq-text"></span></button></div>
+            <div class="col-12"><button class="mcq-option" data-letter="C"><span class="mcq-letter">C</span><span class="mcq-text"></span></button></div>
+            <div class="col-12"><button class="mcq-option" data-letter="D"><span class="mcq-letter">D</span><span class="mcq-text"></span></button></div>
+        </div>
+    </div>
+
     {{ flashcards|json_script:"flashcards-data" }}
     <script>
     // Prepare flashcards data from JSON script tag
@@ -75,7 +93,44 @@
     document.getElementById('flip').addEventListener('click', toggleFlip);
     document.getElementById('next').addEventListener('click', ()=>{ currentIndex=(currentIndex+1)%flashcards.length; updateCard(); });
     document.getElementById('prev').addEventListener('click', ()=>{ currentIndex=(currentIndex-1+flashcards.length)%flashcards.length; updateCard(); });
-    function updateCard(){ flashcardEl.classList.remove('flipped'); const c=flashcards[currentIndex]; questionEl.textContent=c.question; answerEl.textContent=c.answer; if(progressEl){ progressEl.textContent=`Card ${currentIndex+1} of ${flashcards.length}`; } }
+    const mcqPanel = document.getElementById('mcq-panel');
+    const mcqButtons = mcqPanel.querySelectorAll('.mcq-option');
+    function resetMCQ(){ mcqButtons.forEach(btn=>{ btn.classList.remove('correct','incorrect','disabled'); }); }
+    function updateCard(){
+        flashcardEl.classList.remove('flipped');
+        const c=flashcards[currentIndex];
+        questionEl.textContent=c.question;
+        answerEl.textContent=c.answer;
+        if(progressEl){ progressEl.textContent=`Card ${currentIndex+1} of ${flashcards.length}`; }
+        // MCQ handling
+        if(c.options && c.options.length>=2){
+            mcqPanel.style.display='block';
+            resetMCQ();
+            const letters=['A','B','C','D'];
+            mcqButtons.forEach((btn, idx)=>{
+                const textSpan=btn.querySelector('.mcq-text');
+                const opt=c.options[idx] || '';
+                textSpan.textContent=opt;
+                btn.style.display = opt ? 'flex' : 'none';
+                btn.onclick = ()=>{
+                    if(btn.classList.contains('disabled')) return;
+                    const chosen=btn.getAttribute('data-letter');
+                    const isCorrect = (c.correct||'').toUpperCase()===chosen.toUpperCase();
+                    btn.classList.add(isCorrect? 'correct':'incorrect','disabled');
+                    // Mark correct option if wrong choice
+                    if(!isCorrect){
+                        mcqButtons.forEach(b=>{ if(b.getAttribute('data-letter')===(c.correct||'')) b.classList.add('correct','disabled'); else b.classList.add('disabled'); });
+                    } else {
+                        mcqButtons.forEach(b=> b.classList.add('disabled'));
+                    }
+                };
+            });
+        } else {
+            mcqPanel.style.display='none';
+        }
+    }
+    // initialize first card state
+    updateCard();
     </script>
     {% else %}
     <p class="text-muted">Select a category to start studying flashcards.</p>
