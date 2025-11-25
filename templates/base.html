@@ -16,8 +16,8 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-auto col-md-2 px-0 sidebar">
-                <div class="ps-logo text-center">FlashAI</div>
+            <div class="col-auto col-md-2 px-0 sidebar comic-sidebar">
+                <div class="ps-logo text-center comic-badge"><span>FlashAI</span></div>
                 <nav class="nav flex-column">
                     <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                         href="{% url 'home' %}">
@@ -51,11 +51,11 @@
             <!-- Main content -->
             <div class="col py-3">
                 {% block content %}
-                <h2 class="mb-4">Dashboard</h2>
+                <h2 class="mb-4 comic-heading"><span>Dashboard</span></h2>
 
                 <div class="row justify-content-center g-4">
                     <div class="col-12 col-md-6 col-lg-4">
-                        <div class="dashboard-stat flashcard-total-stat text-center">
+                        <div class="dashboard-stat flashcard-total-stat comic-panel text-center">
                             <h3 id="flashcard-count">{{ flashcard_count }}</h3>
                             <p class="mb-0 fw-bold total-label">Total FlashCards</p>
                         </div>
@@ -63,13 +63,13 @@
                 </div>
 
                 {% if request.resolver_match.url_name == 'home' %}
-                <h3 class="mt-5 mb-3" style="font-weight:900;color:#f08f7f;">Recently Added</h3>
+                <h3 class="mt-5 mb-3 comic-heading"><span>Recently Added</span></h3>
                 <div class="row g-3 recent-flashcards">
                     {% for fc in recent_flashcards %}
                     <div class="col-md-6 col-lg-4">
                         <a href="{% url 'flashcard_update' fc.id %}" class="text-decoration-none">
-                            <div class="flashcard-box" style="cursor:pointer;">
-                                <strong>{{ fc.question|truncatechars:80 }}</strong>
+                            <div class="flashcard-box comic-panel" style="cursor:pointer;">
+                                <div class="recent-title">{{ fc.question|truncatechars:80 }}</div>
                                 <div class="small text-muted mt-2">{{ fc.created_at|date:"Y-m-d H:i" }} · {{ fc.category.name }}</div>
                             </div>
                         </a>

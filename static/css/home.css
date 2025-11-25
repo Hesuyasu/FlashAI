@@ -4,352 +4,106 @@ body {
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
 }
+/* (Removed old sidebar override block to rely on base.css only) */
 
-/* Sidebar pastel theme */
-.sidebar {
-    min-height: 100vh;
-    background: #fff8f0;
-    box-shadow: 1px 0 15px rgba(200, 150, 120, 0.15);
-    border-right: 3px solid #f7b2a0;
-    transition: all 0.3s ease;
-    /* Use layout from base.html grid; avoid fixed positioning here */
+/* ================= Comic Dashboard Enhancements ================= */
+.comic-dashboard {
+    position: relative;
+    padding-bottom: 2rem;
+    /* soft radial tone background matching existing palette */
+    background: radial-gradient(circle at 20% 20%, #fff8f2 0%, #ffe5df 55%, #fef9f6 95%);
+    font-family: 'Comic Sans MS','Segoe UI','Roboto',sans-serif;
 }
-        
-.profile-menu {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 100;
+.comic-dashboard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(#f08f7f 1px, transparent 1px);
+    background-size: 14px 14px;
+    opacity: .08;
+    pointer-events: none;
 }
 
-.dots-btn {
-    background: #f8c5b8;
-    border: none;
-    border-radius: 50%;
-    width: 2.5rem;
-    height: 2.5rem;
-    font-weight: bold;
-    font-size: 1.4rem;
+/* Generic comic panel styling for dashboard stats & recent flashcards */
+.comic-panel {
+    border: 3px solid #333;
+    background: #fffdfc;
+    box-shadow: 4px 4px 0 #f08f7f;
+    border-radius: 14px;
+    position: relative;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+}
+.comic-panel:hover {
+    transform: translate(-4px,-4px);
+    box-shadow: 8px 8px 0 #f08f7f;
+}
+.comic-panel h3, .comic-panel h4 {
+    color: #f08f7f;
+    text-shadow: 2px 2px 0 #333;
+    font-weight: 900;
+    letter-spacing: .5px;
+}
+.comic-panel p, .comic-panel .small {
+    font-weight: 500;
+}
+
+/* Lighter typography for Quick Actions */
+.quick-actions .comic-panel h4 {
+    font-weight: 500;
+    text-shadow: none;
+    font-size: 1.35rem;
+}
+.quick-actions .comic-panel p {
+    font-weight: 400;
+}
+
+/* Lighter typography for Recently Added titles */
+.recent-flashcards .comic-panel .recent-title {
+    color: #f08f7f;
+    font-weight: 500;
+    text-shadow: none;
+    font-size: 1.05rem;
+}
+.recent-flashcards .comic-panel .small {
+    font-weight: 400;
+}
+
+/* Comic heading style */
+.comic-heading span {
+    display: inline-block;
+    background: #f08f7f;
     color: #fff;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: .45rem 1.15rem .55rem 1.15rem;
+    border: 4px solid #333;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #333;
+    font-weight: 900;
+    letter-spacing: 1px;
+    transform: skew(-5deg);
 }
 
-.dots-btn:hover {
-    background: #f08f7f;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 3rem;
-    right: 0;
+/* Adjust existing dashboard-stat when combined with comic-panel */
+.dashboard-stat.comic-panel {
     background: #fff;
-    min-width: 140px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    border-radius: 0.8rem;
-    z-index: 200;
-    overflow: hidden;
+    box-shadow: 4px 4px 0 #f08f7f;
+}
+.dashboard-stat.comic-panel:hover {
+    box-shadow: 8px 8px 0 #f08f7f;
 }
 
-.dropdown-content a {
-    display: block;
-    padding: 0.7rem 1rem;
-    text-decoration: none;
-    color: #23274c;
-    font-weight: 600;
-    transition: background 0.2s;
+/* Make total count pop more in comic style */
+.flashcard-total-stat.comic-panel h3 {
+    text-shadow: 3px 3px 0 #333, -1px -1px 0 #fff;
 }
 
-.dropdown-content a:hover {
-    background: #f5f5f5;
-}
-
-.show {
-    display: block;
-}
-
-.sidebar.collapsed {
-    width: 70px;
-}
-
-.sidebar .logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 2rem 0 1.2rem 0;
-    transition: all 0.3s ease;
-}
-
-.ps-logo {
-    font-weight: 900;
-    color: #f08f7f;
-    font-size: 2.2rem;
-    letter-spacing: 2px;
-    text-shadow: 1px 1px 2px #ffd6c0;
-    transition: all 0.3s ease;
-}
-
-.logo-svg {
-    width: 60px;
-    height: 60px;
-    opacity: 1; /* Make logo visible by default */
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.sidebar.collapsed .ps-logo {
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    margin: 0
-}
-
-.sidebar.collapsed .logo-svg {
-    opacity: 1;
-}
-
-.sidebar nav {
-    padding-top: 2rem;
-}
-
-.sidebar .nav-link {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #f08f7f;
-    background: #fff3f0;
-    border-radius: 1.8rem;
-    margin-bottom: 0.7rem;
-    padding: 0.75rem 1.5rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-    display: flex;
-    align-items: center;
-}
-
-.sidebar.collapsed .nav-link {
-    padding: 0.75rem;
-    justify-content: center;
-}
-
-.sidebar .nav-link.active,
-.sidebar .nav-link:focus,
-.sidebar .nav-link:hover {
-    background: #ffdede;
-    color: #d94545 !important;
-    transform: translateX(5px);
-    box-shadow: 0 4px 10px rgba(255, 150, 150, 0.3);
-    border-color: #f7b2a0;
-}
-
-.sidebar.collapsed .nav-link.active,
-.sidebar.collapsed .nav-link:focus,
-.sidebar.collapsed .nav-link:hover {
-    transform: translateX(3px);
-}
-
-.sidebar .nav-link i {
-    font-size: 1.6rem;
-    vertical-align: middle;
-    margin-right: 0.8rem;
-    transition: margin-right 0.3s ease;
-    min-width: 24px;
-    text-align: center;
-}
-
-.sidebar.collapsed .nav-link i {
-    margin-right: 0;
-}
-
-.sidebar .nav-text {
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.sidebar.collapsed .nav-text {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-}
-
-/* Toggle button */
-.sidebar-toggle {
-    position: absolute;
-    top: 1rem;
-    right: -15px;
-    background: #f08f7f;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1001;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.sidebar-toggle:hover {
-    background: #d94545;
-    transform: scale(1.1);
-}
-
-/* Main content */
-.main-content {
-    margin-left: 250px;
-    transition: margin-left 0.3s ease;
-    min-height: 100vh;
-    background: #fef9f6;
-    padding: 2rem 3rem;
-}
-
-.sidebar.collapsed ~ .main-content {
-    margin-left: 70px;
-}
-
-/* Card style for dashboard stats/content boxes */
-.card, .flashcard-box {
-    background: #fff1f0;
-    border-radius: 2rem;
-    padding: 2rem;
-    box-shadow: 0 8px 20px rgba(200, 150, 150, 0.2);
-    transition: all 0.3s ease;
-}
-
-.card:hover, .flashcard-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(200, 150, 150, 0.3);
-}
-
-/* Chunky outlined headings */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 900;
-    color: #f08f7f;
-    text-shadow:
-        -1px -1px 0 #fff,
-        1px -1px 0 #fff,
-        -1px 1px 0 #fff,
-        1px 1px 0 #fff;
-}
-
-/* Buttons pastel */
-.btn-primary {
-    background-color: #f08f7f;
-    border: none;
-    font-weight: 700;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #d94545;
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(217, 85, 85, 0.4);
-}
-
-/* Dashboard statistics box */
-.dashboard-stat {
-    background: #fff5f2;
-    border-radius: 1.8rem;
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: 0 6px 18px rgba(240, 143, 127, 0.2);
-    transition: all 0.3s ease;
-    cursor: default;
-}
-
-.dashboard-stat:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(240, 143, 127, 0.3);
-}
-
-.dashboard-stat h3 {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
-    color: #f08f7f;
-}
-
-.dashboard-stat p {
-    font-size: 1rem;
-    color: #777;
+/* Enlarged Quick Actions heading */
+.quick-actions-heading {
+    font-size: 2.1rem;
+    letter-spacing: 1px;
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 70px;
-        transform: translateX(-100%);
-    }
-
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-
-    .sidebar .logo-container {
-        margin: 1.2rem 0 0.8rem 0;
-    }
-
-    .ps-logo {
-        font-size: 1.6rem;
-        opacity: 0;
-        height: 0;
-        overflow: hidden;
-    }
-
-    .logo-svg {
-        opacity: 1;
-    }
-
-    .sidebar .nav-link {
-        font-size: 1rem;
-        padding: 0.55rem;
-        margin-bottom: .4rem;
-        justify-content: center;
-    }
-
-    .sidebar .nav-text {
-        opacity: 0;
-        width: 0;
-        height: 0;
-        overflow: hidden;
-    }
-
-    .sidebar .nav-link i {
-        margin-right: 0;
-    }
-
-    .main-content {
-        margin-left: 0 !important;
-        padding: 1rem 1.5rem;
-    }
-
-    .mobile-menu-toggle {
-        display: block !important;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 999;
-        background: #f08f7f;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .sidebar-toggle {
-        display: none;
-    }
-}
-
-/* Mobile menu toggle (hidden by default) */
-.mobile-menu-toggle {
-    display: none;
+    .comic-panel { box-shadow: 3px 3px 0 #f08f7f; }
+    .comic-panel:hover { transform: translate(-3px,-3px); box-shadow: 6px 6px 0 #f08f7f; }
+    .comic-heading span { box-shadow: 4px 4px 0 #333; }
 }

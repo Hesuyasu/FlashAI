@@ -88,6 +88,38 @@ h1, h2, h3, h4, h5, h6 {
         1px 1px 0 #fff;
 }
 
+/* Comic badge style for sidebar logo */
+.comic-badge span {
+    display: inline-block;
+    background: #f08f7f;
+    color: #fff;
+    padding: .35rem .9rem .45rem .9rem;
+    border: 4px solid #333;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #333;
+    font-weight: 900;
+    letter-spacing: 1px;
+    transform: skew(-5deg);
+    font-size: 1.85rem;
+}
+.comic-heading span {
+    display: inline-block;
+    background: #f08f7f;
+    color: #fff;
+    padding: .45rem 1.15rem .55rem 1.15rem;
+    border: 4px solid #333;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #333;
+    font-weight: 900;
+    letter-spacing: 1px;
+    transform: skew(-5deg);
+}
+.comic-sidebar .ps-logo.comic-badge { margin: 1.25rem 0 1rem 0; }
+
+@media (max-width: 768px) {
+    .comic-badge span { box-shadow: 4px 4px 0 #333; }
+}
+
 /* Recently Added flashcards link styling */
 .recent-flashcards a.text-decoration-none,
 .recent-flashcards a.text-decoration-none:visited,
@@ -182,5 +214,79 @@ h1, h2, h3, h4, h5, h6 {
     .col.py-3 {
         padding-left: 1.1rem !important;
         padding-right: 1.1rem !important;
+    }
+}
+
+/* ================= Comic Sidebar (Navbar) ================= */
+.comic-sidebar {
+    /* Comic look: strong border and offset shadow using theme accent */
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    border: 3px solid #333;
+    border-left: none;
+    background: #fffdfc;
+    box-shadow: 8px 0 0 #f08f7f;
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+    font-family: 'Comic Sans MS','Segoe UI','Roboto',sans-serif;
+}
+.comic-sidebar .ps-logo {
+    color: #f08f7f;
+    text-shadow: 2px 2px 0 #333;
+    letter-spacing: 1px;
+    font-weight: 900;
+}
+.comic-sidebar nav { padding-top: 1rem; }
+
+.comic-sidebar .nav-link {
+    background: #fff !important;
+    color: #f08f7f !important;
+    border: 2px solid #333;
+    border-radius: 22px;
+    font-weight: 700;
+    font-size: 1.12rem;
+    letter-spacing: .5px;
+    margin: 0 16px 20px 16px; /* more outer spacing */
+    padding: 0.85rem 1.35rem; /* larger button feel */
+    min-height: 64px; /* equal pill height */
+    box-shadow: 4px 4px 0 #f08f7f;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.comic-sidebar .nav-link i { color: #333; font-size: 1.2rem; }
+
+.comic-sidebar .nav-link:hover,
+.comic-sidebar .nav-link:focus {
+    background: #fff5f2 !important;
+    transform: translate(-4px,-4px);
+    box-shadow: 7px 7px 0 #f08f7f;
+    border-color: #333;
+}
+
+.comic-sidebar .nav-link.active {
+    background: #ffdede !important;
+    color: #d94545 !important;
+    box-shadow: 7px 7px 0 #f08f7f;
+    transform: translate(-4px,-4px);
+}
+
+.comic-sidebar form .nav-link {
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .comic-sidebar {
+        border-radius: 0;
+        border-left: 3px solid #333;
+        box-shadow: 0 6px 0 #f08f7f;
+    }
+    .comic-sidebar .nav-link {
+        margin: 0 10px 14px 10px;
+        padding: 0.7rem 1rem;
+        font-size: 1.05rem;
+        min-height: 56px; /* mobile equal height */
+        box-shadow: 3px 3px 0 #f08f7f;
     }
 }

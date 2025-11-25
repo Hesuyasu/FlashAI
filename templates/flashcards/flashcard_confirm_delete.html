@@ -1,57 +1,34 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Delete FlashCard{% endblock %}
 
-{% block content %}
-<h4 class="mb-4 text-danger">Delete FlashCard</h4>
-
-<div class="card p-4 shadow-sm custom-form-card">
-    <p>Are you sure you want to delete this flashcard?</p>
-
-    <div class="mb-3">
-        <strong>Question:</strong> {{ flashcard.question }}<br>
-        <strong>Answer:</strong> {{ flashcard.answer }}<br>
-        <strong>Category: {{ flashcard.category.name }}</small>
-    </div>
-
-    <form method="post" class="d-flex">
-        {% csrf_token %}
-        <button type="submit" class="custom-btn">Delete</button>
-        <a href="{% url 'flashcard_list' %}" class="custom-btn cancel-btn">Cancel</a>
-    </form>
-</div>
-
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 <style>
-
-.custom-form-card {
-    border-radius: 1rem;
-    border: 2px solid #e3342f;
-    background-color: #fff;
-}
-
-.custom-btn {
-    background-color: #e3342f;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    font-weight: 600;
-}
-
-.custom-btn:hover {
-    background-color: #c60016;
-}
-
-.cancel-btn {
-    background-color: #fff;
-    color: #e3342f;
-    border: 2px solid #e3342f;
-    margin-left: 0.5rem;
-}
-
-.cancel-btn:hover {
-    background-color: #ffe5e5;
-    color: #c60016;
-}
+.delete-panel.comic-panel { padding:1.4rem 1.6rem; }
+.confirm-btn { background:#f08f7f; color:#fff; font-weight:700; border:3px solid #333; border-radius:20px; padding:.55rem 1.2rem; box-shadow:4px 4px 0 #f08f7f; transition:transform .2s, box-shadow .2s, background .2s; }
+.confirm-btn:hover { background:#d94545; transform:translate(-4px,-4px); box-shadow:7px 7px 0 #f08f7f; }
+.cancel-btn { background:#fff; color:#d94545; font-weight:700; border:3px solid #333; border-radius:20px; padding:.55rem 1.2rem; box-shadow:4px 4px 0 #f08f7f; transition:transform .2s, box-shadow .2s; }
+.cancel-btn:hover { transform:translate(-4px,-4px); box-shadow:7px 7px 0 #f08f7f; }
+.delete-panel p { font-weight:500; }
 </style>
+{% endblock %}
 
+{% block content %}
+<div class="comic-dashboard">
+    <h2 class="mb-4 comic-heading"><span>Delete FlashCard</span></h2>
+    <div class="delete-panel comic-panel">
+        <p>Are you sure you want to delete this flashcard?</p>
+        <div class="mb-3 small">
+            <strong>Q:</strong> {{ flashcard.question }}<br>
+            <strong>A:</strong> {{ flashcard.answer }}<br>
+            <strong>Category:</strong> {{ flashcard.category.name }}
+        </div>
+        <form method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            <button type="submit" class="confirm-btn">Delete</button>
+            <a href="{% url 'flashcard_list' %}" class="cancel-btn text-decoration-none text-center">Cancel</a>
+        </form>
+    </div>
+</div>
 {% endblock %}
