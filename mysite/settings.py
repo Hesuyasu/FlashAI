@@ -155,13 +155,12 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 SITE_ID = 1
 ACCOUNT_SIGNUP_FORM_CLASS = None
-ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirect to login after logout
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-# Removed malformed ACCOUNT_SIGNUP_FIELDS with asterisks; default signup form handles username/email/password fields.
 ACCOUNT_UNIQUE_EMAIL = True
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 

@@ -1,12 +1,9 @@
-/* Body pastel background */
 body {
     background: #fef9f6;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
 }
-/* (Removed old sidebar override block to rely on base.css only) */
 
-/* ================= Comic Dashboard Enhancements ================= */
 .comic-dashboard {
     position: relative;
     padding-bottom: 2rem;
@@ -24,7 +21,6 @@ body {
     pointer-events: none;
 }
 
-/* Generic comic panel styling for dashboard stats & recent flashcards */
 .comic-panel {
     border: 3px solid #333;
     background: #fffdfc;
@@ -47,7 +43,6 @@ body {
     font-weight: 500;
 }
 
-/* Lighter typography for Quick Actions */
 .quick-actions .comic-panel h4 {
     font-weight: 500;
     text-shadow: none;
@@ -57,7 +52,6 @@ body {
     font-weight: 400;
 }
 
-/* Lighter typography for Recently Added titles */
 .recent-flashcards .comic-panel .recent-title {
     color: #f08f7f;
     font-weight: 500;
@@ -68,7 +62,6 @@ body {
     font-weight: 400;
 }
 
-/* Comic heading style */
 .comic-heading span {
     display: inline-block;
     background: #f08f7f;
@@ -82,7 +75,6 @@ body {
     transform: skew(-5deg);
 }
 
-/* Adjust existing dashboard-stat when combined with comic-panel */
 .dashboard-stat.comic-panel {
     background: #fff;
     box-shadow: 4px 4px 0 #f08f7f;
@@ -91,12 +83,10 @@ body {
     box-shadow: 8px 8px 0 #f08f7f;
 }
 
-/* Make total count pop more in comic style */
 .flashcard-total-stat.comic-panel h3 {
     text-shadow: 3px 3px 0 #333, -1px -1px 0 #fff;
 }
 
-/* Enlarged Quick Actions heading */
 .quick-actions-heading {
     font-size: 2.1rem;
     letter-spacing: 1px;

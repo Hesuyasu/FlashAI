@@ -28,13 +28,9 @@ def upload_pdf(request):
     if request.method == 'POST':
         form = PDFUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            pdf_instance = form.save()  # Save PDFDocument
-
-            # Category selection from raw POST (not part of ModelForm)
+            pdf_instance = form.save()
             category_name = request.POST.get('category') or 'Other'
             category_obj, _ = Category.objects.get_or_create(name=category_name)
-
-            # Open the stored file for text extraction
             pdf_file_field = pdf_instance.pdf_file
             try:
                 pdf_file_field.open('rb')
@@ -181,11 +177,9 @@ def study_flashcards(request):
     else:
         flashcards_qs = Flashcard.objects.none()
 
-    # Convert QuerySet to list of dicts for JSON serialization
     flashcards = []
     for f in flashcards_qs:
         options = [f.option_a, f.option_b, f.option_c, f.option_d]
-        # filter out empty strings while preserving order
         options = [o for o in options if o]
         flashcards.append({
             "question": f.question,

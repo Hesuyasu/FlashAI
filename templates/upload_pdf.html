@@ -3,9 +3,8 @@
 {% block title %}Upload PDF{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=2">
 <style>
-/* Layout tweaks leveraging comic styles */
 .upload-grid { margin-top:2rem; max-width:960px; width:100%; }
 .pdf-list-area { margin-top:2.2rem; max-width:960px; width:100%; display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.1rem; }
 .pdf-card a { color:#f08f7f; font-weight:600; word-break:break-word; }
@@ -17,27 +16,39 @@
 .big-btn:hover { background:#d94545; transform:translate(-4px,-4px); box-shadow:7px 7px 0 #f08f7f; }
 .pdf-icon { display:inline-block; background:#f08f7f; border:4px solid #333; border-radius:16px; padding:.9rem 1.1rem; box-shadow:5px 5px 0 #333; transform:skew(-5deg); }
 .pdf-icon span { color:#fff; font-size:1.9rem; font-weight:900; letter-spacing:1px; }
+
+/* Loading overlay */
+.loading-overlay { position: fixed; inset: 0; background: rgba(255,253,252,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; }
+.loading-overlay.show { display: flex; }
+.loading-box { background:#fff1f0; border:3px solid #333; border-radius:12px; padding:18px 22px; box-shadow:6px 6px 0 #f08f7f; text-align:center; }
+.loading-box p { margin:8px 0 0 0; font-weight:800; color:#f08f7f; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="comic-dashboard d-flex flex-column align-items-center">
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+        <div class="loading-box">
+            <div style="font-family:'Comic Sans MS','Segoe UI',cursive; font-weight:900; color:#f08f7f; font-size:1.2rem;">Uploading…</div>
+            <p style="margin-top:6px; color:#d94545; font-weight:700;">Converting PDF to flashcards with AI</p>
+        </div>
+    </div>
     <h2 class="mb-4 comic-heading"><span>Upload PDF</span></h2>
     <div class="upload-grid w-100 d-flex flex-column align-items-center">
         <div class="comic-panel p-4 mb-4 w-100" style="max-width:520px; text-align:center;">
             <div class="pdf-icon mb-3"><span>PDF</span></div>
             <p class="mb-3 text-muted">Quickly upload a PDF and convert it to flashcards with AI!</p>
-            <form method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}">
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}">
                 {% csrf_token %}
                 <input type="text" name="title" placeholder="Enter PDF Title" class="form-input">
                 <input type="text" name="category" placeholder="Enter category (new or existing)" class="form-input" />
                 {{ form.pdf_file }}
-                <button type="submit" class="big-btn mt-1">Upload PDF</button>
+                <button id="uploadBtn" type="submit" class="big-btn mt-1">Upload PDF</button>
             </form>
         </div>
     </div>
     <div class="pdf-list-area">
-        {% for pdf in pdf_list %}
+        {% for pdf in pdf_list|slice:":3" %}
         <div class="pdf-card comic-panel p-3">
             <a href="{{ pdf.pdf_file.url }}" target="_blank">{{ pdf.title }}</a>
             <div class="pdf-info mt-1">
@@ -50,4 +61,23 @@
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function(){
+        const form = document.getElementById('uploadForm');
+        if (!form) return;
+        const overlay = document.getElementById('loadingOverlay');
+        const btn = document.getElementById('uploadBtn');
+        form.addEventListener('submit', function(ev){
+            ev.preventDefault();
+            if (overlay) overlay.classList.add('show');
+            if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
+            requestAnimationFrame(function(){
+                setTimeout(function(){ form.submit(); }, 50);
+            });
+        });
+    })();
+    </script>
 {% endblock %}

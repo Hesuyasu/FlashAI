@@ -6,13 +6,11 @@
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
 <link rel="stylesheet" href="{% static 'css/study.css' %}">
 <style>
-/* Comic integration tweaks */
 .study-panel.comic-panel { padding:1.2rem 1.3rem; }
 .study-card.comic-panel { width:100%; max-width:480px; height:300px; perspective:1100px; cursor:pointer; }
 .study-controls .btn { border:2px solid #333; font-weight:700; box-shadow:3px 3px 0 #f08f7f; }
 .study-controls .btn:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 #f08f7f; }
 .qa-label { color:#d94545; font-weight:700; }
-/* MCQ options */
 .mcq-option { display:flex; align-items:center; gap:.75rem; width:100%; padding:.8rem 1rem; border:2px solid #333; border-radius:14px; background:#fff; box-shadow:4px 4px 0 #f08f7f; font-weight:600; }
 .mcq-option:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 #f08f7f; }
 .mcq-letter { display:inline-flex; width:34px; height:34px; border:2px solid #333; border-radius:50%; align-items:center; justify-content:center; background:#ffdede; color:#d94545; font-weight:900; }
@@ -81,7 +79,6 @@
 
     {{ flashcards|json_script:"flashcards-data" }}
     <script>
-    // Prepare flashcards data from JSON script tag
     const flashcards = JSON.parse(document.getElementById('flashcards-data').textContent);
     let currentIndex = 0;
     const flashcardEl = document.getElementById('flashcard');
@@ -102,7 +99,6 @@
         questionEl.textContent=c.question;
         answerEl.textContent=c.answer;
         if(progressEl){ progressEl.textContent=`Card ${currentIndex+1} of ${flashcards.length}`; }
-        // MCQ handling
         if(c.options && c.options.length>=2){
             mcqPanel.style.display='block';
             resetMCQ();
@@ -117,7 +113,6 @@
                     const chosen=btn.getAttribute('data-letter');
                     const isCorrect = (c.correct||'').toUpperCase()===chosen.toUpperCase();
                     btn.classList.add(isCorrect? 'correct':'incorrect','disabled');
-                    // Mark correct option if wrong choice
                     if(!isCorrect){
                         mcqButtons.forEach(b=>{ if(b.getAttribute('data-letter')===(c.correct||'')) b.classList.add('correct','disabled'); else b.classList.add('disabled'); });
                     } else {
@@ -129,7 +124,6 @@
             mcqPanel.style.display='none';
         }
     }
-    // initialize first card state
     updateCard();
     </script>
     {% else %}

@@ -9,19 +9,19 @@ import json
 import re
 
 try:
-    import PyPDF2  # type: ignore
-except Exception:  # pragma: no cover
+    import PyPDF2
+except Exception:
     PyPDF2 = None
 
 try:
-    from decouple import config  # type: ignore
-except Exception:  # pragma: no cover
+    from decouple import config
+except Exception:
     def config(key, default=None):
         return default
 
 try:
-    from bytez import Bytez  # type: ignore
-except Exception:  # pragma: no cover
+    from bytez import Bytez 
+except Exception: 
     Bytez = None
 
 
@@ -45,7 +45,7 @@ def extract_text_from_pdf(pdf_file):
             page_text = page.extract_text()
             if page_text:
                 text += page_text
-    except Exception as e:  # pragma: no cover
+    except Exception as e: 
         print("PDF extraction error:", e)
         return ""
     return text
@@ -66,10 +66,8 @@ def _fallback_flashcards(cleaned_text, limit=3):
 
     def normalize_subject(subj: str) -> str:
         subj = subj.strip().strip(' .,:;\t\n\r')
-        # Drop leading context like "In networking," or articles
         subj = re.sub(r'^(?:In|On|At|During|Within|From)\s+[^,]+,\s*', '', subj, flags=re.I)
         subj = re.sub(r'^(?:an?|the)\s+', '', subj, flags=re.I)
-        # Title-case short subjects lightly (avoid shouting for ALL CAPS)
         if len(subj) <= 60:
             subj = subj[0:1].upper() + subj[1:]
         return subj
@@ -78,7 +76,6 @@ def _fallback_flashcards(cleaned_text, limit=3):
         s = sentence.strip()
         if len(s) < 10:
             return None
-        # Handle colon or hyphen definition: "Term: definition" or "Term - definition"
         m = re.match(r'^\s*([^:\-]{2,80})\s*[:\-]\s+(.+)$', s)
         if m:
             subj, rest = m.group(1), m.group(2)
@@ -89,7 +86,6 @@ def _fallback_flashcards(cleaned_text, limit=3):
                 answer = (f"{subj} {qverb} " + rest).strip()
                 return question[:120], answer[:300]
 
-        # Handle "X is Y" and "X are Y"
         m = re.match(r'^\s*(?:In\s+[^,]+,\s*)?(?:The\s+|An\s+|A\s+)?([^.!?]{2,80}?)\s+is\s+(.+)$', s, flags=re.I)
         if m:
             subj, pred = m.group(1), m.group(2)
@@ -105,7 +101,6 @@ def _fallback_flashcards(cleaned_text, limit=3):
             answer = f"{subj} are {pred}"
             return question[:120], answer[:300]
 
-        # Handle "X means/ refers to/ stands for/ is defined as Y"
         m = re.match(r'^\s*(?:The\s+|An\s+|A\s+)?([^.!?]{2,80}?)\s+(means|refers to|stands for|is defined as)\s+(.+)$', s, flags=re.I)
         if m:
             subj, verb, rest = m.group(1), m.group(2).lower(), m.group(3)
@@ -118,7 +113,6 @@ def _fallback_flashcards(cleaned_text, limit=3):
                 answer = f"{subj} stands for {rest}"
             return question[:120], answer[:300]
 
-        # Fallback: use first few words as a topic
         words = re.findall(r"[A-Za-z0-9]+(?:'[A-Za-z0-9]+)?", s)
         topic = ' '.join(words[:5]) if words else 'this topic'
         topic = normalize_subject(topic)
@@ -172,13 +166,11 @@ def generate_flashcards_with_ai(text):
             {"role": "user", "content": prompt}
         ])
         
-        # DEBUG: Print raw AI response
         print("=" * 80)
         print("RAW AI RESPONSE:")
         print(output)
         print("=" * 80)
         
-        # Handle new Response object structure
         if hasattr(output, 'output') and isinstance(output.output, dict):
             content = output.output.get('content')
         elif isinstance(output, dict):
@@ -203,20 +195,17 @@ def generate_flashcards_with_ai(text):
         if not isinstance(flashcards, list):
             return _fallback_flashcards(cleaned_text)
         
-        # DEBUG: Print parsed flashcards
         print("PARSED FLASHCARDS:")
         for idx, c in enumerate(flashcards[:10]):
             print(f"Card {idx + 1}:", c)
         print("=" * 80)
         
-        # Basic validation of keys
         valid = []
         for c in flashcards[:10]:
             q = c.get('question') or c.get('Question')
             a = c.get('answer') or c.get('Answer')
             if q and a:
                 card_data = {'question': str(q)[:255], 'answer': str(a)[:1000]}
-                # Include MCQ fields if present
                 if c.get('option_a'):
                     card_data['option_a'] = str(c.get('option_a', ''))[:255]
                     card_data['option_b'] = str(c.get('option_b', ''))[:255]
@@ -228,6 +217,6 @@ def generate_flashcards_with_ai(text):
                     print(f"REGULAR Q&A: {card_data['question'][:50]}...")
                 valid.append(card_data)
         return valid or _fallback_flashcards(cleaned_text)
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         print("AI generation exception:", e)
         return _fallback_flashcards(cleaned_text)
