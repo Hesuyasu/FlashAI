@@ -1,14 +1,13 @@
-const CACHE_NAME = 'FlashAI-cache-v2';
+const CACHE_NAME = 'FlashAI-cache-v3';
 const urlsToCache = [
   '/',  // home
   '/offline/',
-  '/static/css/bootstrap.min.css',
-  '/static/js/bootstrap.bundle.min.js',
   '/static/img/icon-192.png',
   '/static/img/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       console.log('Caching files...');
@@ -40,4 +39,5 @@ self.addEventListener('activate', event => {
       keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
     ))
   );
+  self.clients.claim();
 });

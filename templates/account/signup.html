@@ -1,10 +1,12 @@
 {% load static %}
 {% load socialaccount %}
 {% load widget_tweaks %}
+{% load pwa %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    {% progressive_web_app_meta %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | FlashAI</title>
