@@ -7,6 +7,7 @@ heuristic creates simple flashcards by splitting the text into sentences.
 
 import json
 import re
+import random
 
 try:
     import PyPDF2
@@ -18,6 +19,11 @@ try:
 except Exception:
     def config(key, default=None):
         return default
+
+try:
+    from django.conf import settings
+except Exception:
+    settings = None
 
 try:
     from bytez import Bytez 
@@ -52,16 +58,125 @@ def extract_text_from_pdf(pdf_file):
 
 
 def extract_last_json_array(text):
+    if not text:
+        return None
+    # Prefer the last bracketed array; tolerate leading/trailing noise
     matches = re.findall(r'\[[\s\S]*?\]', text)
-    return matches[-1] if matches else None
+    js = matches[-1] if matches else None
+    if js:
+        s = js.strip()
+        # Remove common markdown wrappers
+        if s.startswith("```"):
+            s = s.strip('`').strip()
+        return s
+    # Attempt salvage if response starts an array but is truncated (missing closing ])
+    start_idx = text.find('[')
+    if start_idx != -1:
+        candidate = text[start_idx:]
+        # If there is no closing bracket, attempt to auto-complete
+        if ']' not in candidate:
+            # Balance curly braces inside array
+            open_obj = candidate.count('{')
+            close_obj = candidate.count('}')
+            if close_obj < open_obj:
+                candidate += '}' * (open_obj - close_obj)
+            candidate += ']'
+        # Trim trailing junk after the last probable object end
+        # Heuristic: keep until last '}' before final ']'
+        last_obj_end = candidate.rfind('}')
+        if last_obj_end != -1:
+            # Ensure candidate ends with ']' only once
+            tail = candidate[last_obj_end+1:]
+            # Remove extraneous characters between last object and closing bracket
+            tail = re.sub(r'[^\]]+', '', tail)
+            candidate = candidate[:last_obj_end+1] + tail
+        salvaged = candidate.strip()
+        return salvaged if salvaged.startswith('[') else None
+    return None
 
+def try_json_loads(s):
+    """Safely parse JSON, returning None on any error."""
+    if not s:
+        return None
+    s = s.strip()
+    # Some providers return code fences or BOM; clean them
+    s = s.lstrip('\ufeff').strip()
+    if s.startswith("``"):
+        s = s.strip('`').strip()
+    # Ensure it looks like an array; otherwise, attempt object parse
+    try:
+        return json.loads(s)
+    except Exception:
+        return None
+
+def parse_json_array_lenient(s):
+    """Parse as many complete JSON objects from an array as possible.
+
+    Handles truncated arrays like: [ {..}, {..}, {..  (missing close)
+    Returns a list with recovered objects or None if nothing could be parsed.
+    """
+    if not s:
+        return None
+    s = s.strip()
+    # Locate array bounds
+    start = s.find('[')
+    if start == -1:
+        return None
+    # Prefer up to the last closing bracket if present, else to the end
+    end = s.rfind(']')
+    inner = s[start+1:end] if end != -1 else s[start+1:]
+    dec = json.JSONDecoder()
+    pos = 0
+    items = []
+    length = len(inner)
+    while pos < length:
+        # Skip whitespace and commas
+        while pos < length and inner[pos] in ' \t\r\n,':
+            pos += 1
+        if pos >= length:
+            break
+        try:
+            obj, nxt = dec.raw_decode(inner, pos)
+            items.append(obj)
+            pos = nxt
+        except Exception:
+            # Stop at first incomplete/invalid object
+            break
+        # Skip trailing spaces/commas before next object
+        while pos < length and inner[pos] in ' \t\r\n,':
+            pos += 1
+    return items if items else None
+
+
+def assign_options_random(correct, wrongs):
+    wrongs = [w for w in wrongs if w and str(w).strip()]
+    # Ensure exactly 3 wrongs
+    pool = list(map(str, wrongs))
+    while len(pool) < 3:
+        pool.append("Option")
+    pool = pool[:3]
+    slots = [None, None, None, None]
+    correct_idx = random.randint(0, 3)
+    slots[correct_idx] = str(correct)
+    wi = 0
+    for i in range(4):
+        if slots[i] is None:
+            slots[i] = pool[wi]
+            wi += 1
+    letters = ['A', 'B', 'C', 'D']
+    return {
+        'option_a': slots[0],
+        'option_b': slots[1],
+        'option_c': slots[2],
+        'option_d': slots[3],
+        'correct_option': letters[correct_idx]
+    }
 
 def _fallback_flashcards(cleaned_text, limit=3):
-    """Generate better Q/A pairs heuristically from sentences.
+    """Generate Q/A pairs heuristically and include simple MCQ options.
 
-    Attempts to form definition-style questions like "What is X?" by parsing
-    common patterns ("X is ...", "X are ...", "X: ...", "X - ...").
-    Falls back to a concise summary question when no pattern matches.
+    Attempts to form definition-style questions by parsing common patterns.
+    Always returns MCQ-ready dicts with option_a–d and correct_option set.
     """
 
     def normalize_subject(subj: str) -> str:
@@ -131,7 +246,47 @@ def _fallback_flashcards(cleaned_text, limit=3):
             continue
         q, a = qa
         if q and a:
-            cards.append({"question": q, "answer": a})
+            # Synthesize lightweight MCQ options
+            correct = re.split(r'[.;\n]', a)[0][:60]
+            words = re.findall(r'\b[A-Za-z][A-Za-z\-]{2,}\b', cleaned_text)
+            distractor_pool = [w.capitalize() for w in words if w.lower() not in correct.lower()][:6] or [
+                "Concept", "Process", "Component", "Protocol", "Dataset", "Method"
+            ]
+            correct_text = correct or "Correct answer"
+            opts = assign_options_random(correct_text, distractor_pool)
+            card = {
+                "question": q,
+                "answer": a,
+                **opts,
+            }
+            cards.append(card)
+    # If we could not reach the requested limit, add generic MCQs to fill
+    if len(cards) < limit:
+        def synthesize_generic(idx: int):
+            words = re.findall(r'\b[A-Za-z][A-Za-z\-]{3,}\b', cleaned_text)
+            unique = []
+            seen = set()
+            for w in words:
+                lw = w.lower()
+                if lw not in seen:
+                    seen.add(lw)
+                    unique.append(w.capitalize())
+                if len(unique) >= 6:
+                    break
+            pool = unique or ["Concept", "Process", "Component", "Protocol", "Dataset", "Method"]
+            correct = (unique[0] if unique else "Key concept") + " from the text"
+            # Build three wrongs from pool in a rolling fashion
+            wrongs = [pool[(idx + j) % len(pool)] for j in range(3)]
+            opts = assign_options_random(correct, wrongs)
+            return {
+                "question": "Which statement best describes the topic?",
+                "answer": "It refers to key ideas in the provided text.",
+                **opts,
+            }
+
+        needed = limit - len(cards)
+        for i in range(needed):
+            cards.append(synthesize_generic(i))
     return cards
 
 
@@ -144,9 +299,19 @@ def generate_flashcards_with_ai(text):
     if not cleaned_text:
         return []
 
-    api_key = config('BYTEZ_API_KEY', default=None)
+    # Prefer env/.env via decouple; fall back to Django settings if provided
+    api_key = config('BYTEZ_API_KEY', default=None) or (
+        getattr(settings, 'BYTEZ_API_KEY', None) if settings else None
+    )
     if not (api_key and Bytez):
+        print("AI disabled or missing key/SDK; using fallback (synthetic MCQs).")
+        if not api_key:
+            print("BYTEZ_API_KEY not found via decouple or settings.")
+        if not Bytez:
+            print("Bytez SDK not installed. Add 'bytez' to requirements.txt and install.")
         return _fallback_flashcards(cleaned_text)
+    else:
+        print("AI enabled: BYTEZ_API_KEY detected and Bytez SDK available.")
 
     try:
         sdk = Bytez(api_key)
@@ -171,6 +336,9 @@ def generate_flashcards_with_ai(text):
         print(output)
         print("=" * 80)
         
+        if hasattr(output, 'error') and output.error:
+            print("BYTEZ ERROR:", output.error)
+            return _fallback_flashcards(cleaned_text)
         if hasattr(output, 'output') and isinstance(output.output, dict):
             content = output.output.get('content')
         elif isinstance(output, dict):
@@ -184,22 +352,55 @@ def generate_flashcards_with_ai(text):
         
         json_string = extract_last_json_array(content)
         if not json_string:
-            print("WARNING: No JSON array found in AI response")
+            print("WARNING: No JSON array found; attempting salvage")
+            # Salvage attempt already performed inside extract_last_json_array; if still None, fallback
             return _fallback_flashcards(cleaned_text)
         
         print("EXTRACTED JSON STRING:")
         print(json_string)
         print("=" * 80)
         
-        flashcards = json.loads(json_string)
-        if not isinstance(flashcards, list):
-            return _fallback_flashcards(cleaned_text)
+        flashcards = try_json_loads(json_string)
+        if not isinstance(flashcards, list) or not flashcards:
+            # Try lenient recovery from truncated arrays
+            recovered = parse_json_array_lenient(json_string)
+            if recovered:
+                print(f"LENIENT PARSE: recovered {len(recovered)} item(s) from truncated JSON array")
+                flashcards = recovered
+            else:
+                print("WARNING: JSON parsing failed or not a list; using fallback")
+                return _fallback_flashcards(cleaned_text)
         
         print("PARSED FLASHCARDS:")
         for idx, c in enumerate(flashcards[:10]):
             print(f"Card {idx + 1}:", c)
         print("=" * 80)
         
+        def _short_phrase(text: str) -> str:
+            t = (text or '').strip()
+            if not t:
+                return ''
+            t = re.split(r'[.;\n]', t)[0]
+            t = re.sub(r'\s+', ' ', t).strip()
+            return t[:60]
+
+        def _distractors(source: str, avoid: str, k: int = 3):
+            words = re.findall(r'\b[A-Za-z][A-Za-z\-]{2,}\b', source)
+            uniq = []
+            seen = set()
+            for w in words:
+                lw = w.lower()
+                if lw not in seen and lw not in avoid.lower():
+                    seen.add(lw)
+                    uniq.append(w.capitalize())
+                if len(uniq) >= 12:
+                    break
+            pool = uniq or ["Concept", "Process", "Component", "Protocol", "Dataset", "Method", "Library", "Model"]
+            out = []
+            for i in range(k):
+                out.append(pool[i % len(pool)])
+            return out
+
         valid = []
         for c in flashcards[:10]:
             q = c.get('question') or c.get('Question')
@@ -214,9 +415,20 @@ def generate_flashcards_with_ai(text):
                     card_data['correct_option'] = str(c.get('correct_option', ''))[:1].upper()
                     print(f"MCQ DETECTED: {card_data['question'][:50]}... with options A-D")
                 else:
-                    print(f"REGULAR Q&A: {card_data['question'][:50]}...")
+                    # Synthesize MCQ options from Q/A when AI omits them
+                    correct = _short_phrase(card_data['answer']) or _short_phrase(card_data['question']) or 'Correct answer'
+                    wrongs = _distractors(cleaned_text, correct, 3)
+                    opts = assign_options_random(correct, wrongs)
+                    card_data.update(opts)
+                    print(f"SYNTHETIC MCQ: {card_data['question'][:50]}... (correct={card_data['correct_option']})")
                 valid.append(card_data)
-        return valid or _fallback_flashcards(cleaned_text)
+        if not valid:
+            return _fallback_flashcards(cleaned_text)
+        # Ensure we return exactly 3 by topping up with fallback if needed
+        if len(valid) < 3:
+            needed = 3 - len(valid)
+            valid.extend(_fallback_flashcards(cleaned_text, limit=needed))
+        return valid
     except Exception as e:
         print("AI generation exception:", e)
         return _fallback_flashcards(cleaned_text)

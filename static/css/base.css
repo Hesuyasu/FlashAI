@@ -110,9 +110,116 @@ h1, h2, h3, h4, h5, h6 {
 }
 .comic-sidebar .ps-logo.comic-badge { margin: 1.25rem 0 1rem 0; }
 
+/* Comic-style hamburger menu button */
+.navbar-toggler.comic-hamburger {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1060;
+    width: 50px;
+    height: 50px;
+    background: #f08f7f;
+    border: 3px solid #333;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0 #333;
+    cursor: pointer;
+    display: none !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler.comic-hamburger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #333;
+    background: #ff9f8f;
+}
+
+.navbar-toggler.comic-hamburger span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler.comic-hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.navbar-toggler.comic-hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggler.comic-hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
+
 @media (max-width: 768px) {
     .comic-badge span { box-shadow: 4px 4px 0 #333; }
+    
+    /* Show hamburger menu on mobile */
+    .navbar-toggler.comic-hamburger {
+        display: flex !important;
+    }
+    
+    /* Hide sidebar by default, show with .show class */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 1040;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+    
+    .comic-sidebar {
+        display: flex;
+        flex-direction: column;
+        border-radius: 0;
+        border-left: 3px solid #333;
+        box-shadow: 8px 0 20px rgba(0,0,0,0.3);
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    /* Overlay when sidebar is open */
+    body.sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1030;
+    }
+    
+    .col.py-3 { 
+        padding-left: 1rem !important; 
+        padding-right: 1rem !important;
+        padding-top: 5rem !important;
+    }
 }
+
+/* Tablet adjustments */
+@media (max-width: 992px) and (min-width: 769px) {
+    .sidebar { width: 200px; }
+    .col.py-3 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    .comic-sidebar .nav-link { min-height: 56px; font-size: 1.05rem; }
+}
+
+/* Global responsive helpers */
+img, svg, canvas { max-width: 100%; height: auto; }
+table { width: 100%; display: block; overflow-x: auto; }
 
 .recent-flashcards a.text-decoration-none,
 .recent-flashcards a.text-decoration-none:visited,
@@ -217,6 +324,75 @@ h1, h2, h3, h4, h5, h6 {
     padding-top: 0.5rem;
     padding-bottom: 0.75rem;
     font-family: 'Comic Sans MS','Segoe UI','Roboto',sans-serif;
+    position: relative;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar collapse button */
+.sidebar-collapse-btn {
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 70px;
+    background: #f08f7f;
+    border: 3px solid #333;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 3px 3px 0 #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    transition: all 0.3s ease;
+}
+
+.sidebar-collapse-btn:hover {
+    background: #ff9f8f;
+    transform: translateY(-50%) translateX(2px);
+}
+
+.sidebar-collapse-btn i {
+    color: #fff;
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+/* When sidebar is collapsed */
+.sidebar.collapsed {
+    width: 80px !important;
+    min-width: 80px;
+}
+
+.sidebar.collapsed .sidebar-collapse-btn i {
+    transform: rotate(180deg);
+}
+
+.sidebar.collapsed .ps-logo span {
+    font-size: 1.2rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.sidebar.collapsed .nav-link {
+    padding: 0.85rem 0.5rem;
+    margin: 0 8px 20px 8px;
+    justify-content: center;
+    gap: 0;
+    font-size: 0;
+    min-height: 56px;
+}
+
+.sidebar.collapsed .nav-link i {
+    margin-right: 0;
+    font-size: 1.5rem;
+}
+
+/* Adjust main content when sidebar is collapsed */
+.sidebar.collapsed ~ .col.py-3 {
+    margin-left: 0;
 }
 .comic-sidebar .ps-logo {
     color: #f08f7f;
@@ -225,6 +401,17 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 900;
 }
 .comic-sidebar nav { padding-top: 1rem; }
+
+.comic-sidebar .nav {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.comic-sidebar .logout-form {
+    margin-top: auto;
+    padding-top: 2rem;
+}
 
 .comic-sidebar .nav-link {
     background: #fff !important;

@@ -93,7 +93,15 @@ body {
 }
 
 @media (max-width: 768px) {
-    .comic-panel { box-shadow: 3px 3px 0 #f08f7f; }
+    .comic-dashboard { padding-bottom: .75rem; }
+    .comic-panel { box-shadow: 3px 3px 0 #f08f7f; padding: 1rem !important; }
     .comic-panel:hover { transform: translate(-3px,-3px); box-shadow: 6px 6px 0 #f08f7f; }
-    .comic-heading span { box-shadow: 4px 4px 0 #333; }
+    .comic-heading span { box-shadow: 4px 4px 0 #333; font-size: 1.05rem; padding: .35rem .8rem .45rem .8rem; }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+    .comic-dashboard { padding-bottom: .5rem; }
+    .comic-panel { padding: .85rem !important; }
+    .comic-heading span { font-size: 1rem; padding: .3rem .7rem .4rem .7rem; }
 }

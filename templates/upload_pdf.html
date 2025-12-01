@@ -22,11 +22,33 @@
 .loading-overlay.show { display: flex; }
 .loading-box { background:#fff1f0; border:3px solid #333; border-radius:12px; padding:18px 22px; box-shadow:6px 6px 0 #f08f7f; text-align:center; }
 .loading-box p { margin:8px 0 0 0; font-weight:800; color:#f08f7f; }
+
+/* Mobile: scale down comic UI to avoid overlap */
+@media (max-width: 768px) {
+    .comic-dashboard { align-items: stretch; }
+    .upload-grid { margin-top: 0; }
+    .upload-compact { padding-bottom: .5rem !important; }
+    .upload-compact .comic-heading { margin-bottom: .5rem !important; }
+    .comic-heading span { font-size: 1.05rem; padding: .3rem .7rem .4rem .7rem; box-shadow:4px 4px 0 #333; }
+    .comic-panel { padding: .9rem !important; }
+    .pdf-icon { padding: .55rem .75rem; border-radius:12px; }
+    .pdf-icon span { font-size: 1.25rem; }
+    .form-input, .form-select { padding: .6rem .85rem; }
+    .big-btn { padding: .6rem .9rem; }
+    .pdf-list-area { margin-top: .5rem; grid-template-columns: 1fr; }
+    /* Compact scale for this page */
+    .upload-compact { transform: scale(0.92); transform-origin: top center; }
+}
+@media (max-width: 480px) {
+    .upload-compact { transform: scale(0.88); transform-origin: top center; padding-bottom: .4rem !important; }
+    /* Hide the recent list on very small screens to keep the form high */
+    .pdf-list-area { display: none; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="comic-dashboard d-flex flex-column align-items-center">
+<div class="comic-dashboard upload-compact d-flex flex-column align-items-center">
     <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
         <div class="loading-box">
             <div style="font-family:'Comic Sans MS','Segoe UI',cursive; font-weight:900; color:#f08f7f; font-size:1.2rem;">Uploading…</div>
